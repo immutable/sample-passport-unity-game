@@ -23,6 +23,8 @@ namespace HyperCasual.Runner
         TextMeshProUGUI m_GoldText;
         [SerializeField]
         Slider m_XpSlider;
+        [SerializeField]
+        GameObject m_Loading;
         
         /// <summary>
         /// The slider that displays the XP value 
@@ -101,9 +103,21 @@ namespace HyperCasual.Runner
             m_NextLevelEvent.Raise();
         }
 
-        void OnContinueButtonClicked()
+        async void OnContinueButtonClicked()
         {
-            
+            m_ContinuePassportButton.gameObject.SetActive(false);
+            m_Loading.gameObject.SetActive(true);
+            string? code = await Passport.Instance.Connect();
+            Debug.Log($"Code: {code}...");
+            if (code != null)
+            {
+                // Code confirmation required
+                m_ContinuePassportButton.gameObject.SetActive(false);
+            }
+            else
+            {
+                // No need to confirm code, log user straight in
+            }
         }
 
         void DisplayStars(int count)

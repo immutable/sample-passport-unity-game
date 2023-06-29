@@ -19,6 +19,12 @@ namespace HyperCasual.Runner
         [SerializeField]
         AbstractGameEvent m_StartButtonEvent;
 
+        public override void Show() 
+        {
+            Debug.Log("Showing Main menu screen");
+            base.Show();
+        }
+
         void OnEnable()
         {
             m_StartButton.AddListener(OnStartButtonClick);

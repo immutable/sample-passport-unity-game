@@ -48,7 +48,6 @@ namespace HyperCasual.Core
         
         public void Disable()
         {
-            Debug.Log("Disable link!");
             m_GameEvent.RemoveListener(this);
             m_EventRaised = false;
         }

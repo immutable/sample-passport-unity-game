@@ -5,6 +5,7 @@ using HyperCasual.Core;
 using HyperCasual.Runner;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Immutable.Passport;
 
 namespace HyperCasual.Gameplay
 {
@@ -75,14 +76,21 @@ namespace HyperCasual.Gameplay
 
             //Create states
             // var splashDelay = new DelayState(m_SplashDelay); 
+            var passportDelay = new AsyncState(Passport.Init());
             m_MainMenuState = new State(OnMainMenuDisplayed);
             m_LevelSelectState = new State(OnLevelSelectionDisplayed);
             
             //Connect the states
-            // m_SplashScreenState.AddLink(new EventLink(m_ContinueEvent, m_MainMenuState));
+            // m_SplashScreenState.AddLink(new Link(splashDelay));
+            m_SplashScreenState.AddLink(new Link(passportDelay));
             // splashDelay.AddLink(new Link(m_MainMenuState));
+            passportDelay.AddLink(new Link(m_MainMenuState));
             m_MainMenuState.AddLink(new EventLink(m_ContinueEvent, m_LevelSelectState));
             m_LevelSelectState.AddLink(new EventLink(m_BackEvent, m_MainMenuState));
+
+            // m_SplashScreenState = new AsyncState(ShowUI<SplashScreen>, Passport.Init());
+            // m_SplashScreenState.AddLink(new Link(m_MainMenuState));
+            // m_StateMachine.Run(m_SplashScreenState);
         }
 
         void CreateLevelSequences()
@@ -180,7 +188,6 @@ namespace HyperCasual.Gameplay
         
         void OnMainMenuDisplayed()
         {
-            Debug.Log("OnMainMenuDisplayed....");
             ShowUI<MainMenu>();
             AudioManager.Instance.PlayMusic(SoundID.MenuMusic);
         }
