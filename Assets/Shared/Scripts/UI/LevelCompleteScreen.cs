@@ -33,8 +33,6 @@ namespace HyperCasual.Runner
         GameObject m_ConnectBrowserContainer;
         [SerializeField]
         TextMeshProUGUI m_VerificationCode;
-        [SerializeField]
-        TextMeshProUGUI m_ConfirmVerificationCodeButton;
         
         /// <summary>
         /// The slider that displays the XP value 
