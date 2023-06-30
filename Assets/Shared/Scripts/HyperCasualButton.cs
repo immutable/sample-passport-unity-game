@@ -48,6 +48,11 @@ namespace HyperCasual.Runner
         {
             m_Action -= handler;
         }
+
+        public void RemoveListener()
+        {
+            m_Button.onClick.RemoveListener(OnClick);
+        }
         
         protected virtual void OnClick()
         {

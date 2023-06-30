@@ -3,6 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Immutable.Passport;
+using Immutable.Passport.Auth;
 
 namespace HyperCasual.Runner
 {
@@ -25,6 +26,15 @@ namespace HyperCasual.Runner
         Slider m_XpSlider;
         [SerializeField]
         GameObject m_Loading;
+
+        [SerializeField]
+        GameObject m_CompletedContainer;
+        [SerializeField]
+        GameObject m_ConnectBrowserContainer;
+        [SerializeField]
+        TextMeshProUGUI m_VerificationCode;
+        [SerializeField]
+        TextMeshProUGUI m_ConfirmVerificationCodeButton;
         
         /// <summary>
         /// The slider that displays the XP value 
@@ -32,6 +42,8 @@ namespace HyperCasual.Runner
         public Slider XpSlider => m_XpSlider;
 
         int m_GoldValue;
+
+        private ConnectResponse? connectResponse;
         
         /// <summary>
         /// The amount of gold to display on the celebration screen.
@@ -90,12 +102,14 @@ namespace HyperCasual.Runner
         public void OnEnable()
         {
             // m_NextButton.AddListener(OnNextButtonClicked);
+            m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
         }
 
         void OnDisable()
         {
             m_NextButton.RemoveListener(OnNextButtonClicked);
+            m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
         }
 
         void OnNextButtonClicked()
@@ -107,16 +121,26 @@ namespace HyperCasual.Runner
         {
             m_ContinuePassportButton.gameObject.SetActive(false);
             m_Loading.gameObject.SetActive(true);
-            string? code = await Passport.Instance.Connect();
-            Debug.Log($"Code: {code}...");
-            if (code != null)
+            connectResponse = await Passport.Instance.Connect();
+            if (connectResponse != null)
             {
                 // Code confirmation required
-                m_ContinuePassportButton.gameObject.SetActive(false);
+                m_ConnectBrowserContainer.gameObject.SetActive(true);
+                m_CompletedContainer.gameObject.SetActive(false);
+                m_VerificationCode.text = connectResponse.code;
+                await Passport.Instance.ConfirmCode();
             }
             else
             {
                 // No need to confirm code, log user straight in
+            }
+        }
+
+        public void ConfirmCode()
+        {
+            if (connectResponse != null)
+            {
+                Application.OpenURL(connectResponse.url);
             }
         }
 
