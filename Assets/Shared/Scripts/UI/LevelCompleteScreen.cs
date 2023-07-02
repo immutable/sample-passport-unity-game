@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Immutable.Passport;
 using Immutable.Passport.Auth;
+using System;
 
 namespace HyperCasual.Runner
 {
@@ -99,39 +100,74 @@ namespace HyperCasual.Runner
 
         public void OnEnable()
         {
-            // m_NextButton.AddListener(OnNextButtonClicked);
             m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
-        }
 
-        void OnDisable()
-        {
             m_NextButton.RemoveListener(OnNextButtonClicked);
-            m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
+            m_NextButton.AddListener(OnNextButtonClicked);
         }
 
         void OnNextButtonClicked()
         {
+            Debug.Log("On Next Button Clicked");
             m_NextLevelEvent.Raise();
         }
 
         async void OnContinueButtonClicked()
         {
-            m_ContinuePassportButton.gameObject.SetActive(false);
+            try 
+            {
+                ShowContinueWithPassportButton(false);
+                ShowLoading();
+                connectResponse = await Passport.Instance.Connect();
+                if (connectResponse != null)
+                {
+                    // Code confirmation required
+                    m_CompletedContainer.gameObject.SetActive(false);
+
+                    m_ConnectBrowserContainer.gameObject.SetActive(true);
+                    m_VerificationCode.text = connectResponse.code;
+                    
+                    await Passport.Instance.ConfirmCode();
+                    m_ConnectBrowserContainer.gameObject.SetActive(false);
+
+                    m_CompletedContainer.gameObject.SetActive(true);
+
+                    ShowContinueWithPassportButton(false);
+                    HideLoading();
+                    ShowNextButton(true);
+                }
+                else
+                {
+                    // No need to confirm code, log user straight in
+                    ShowContinueWithPassportButton(false);
+                    HideLoading();
+                    ShowNextButton(true);
+                }
+            } catch (Exception ex)
+            {
+                Debug.Log($"TEST error: {ex.Message}");
+            }
+        }
+
+        void ShowContinueWithPassportButton(bool show)
+        {
+            m_ContinuePassportButton.gameObject.SetActive(show);
+        }
+
+        void ShowNextButton(bool show)
+        {
+            m_NextButton.gameObject.SetActive(show);
+        }
+
+        void ShowLoading()
+        {
             m_Loading.gameObject.SetActive(true);
-            connectResponse = await Passport.Instance.Connect();
-            if (connectResponse != null)
-            {
-                // Code confirmation required
-                m_ConnectBrowserContainer.gameObject.SetActive(true);
-                m_CompletedContainer.gameObject.SetActive(false);
-                m_VerificationCode.text = connectResponse.code;
-                await Passport.Instance.ConfirmCode();
-            }
-            else
-            {
-                // No need to confirm code, log user straight in
-            }
+        }
+
+        void HideLoading()
+        {
+            m_Loading.gameObject.SetActive(false);
         }
 
         public void ConfirmCode()

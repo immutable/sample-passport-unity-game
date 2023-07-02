@@ -1,7 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using HyperCasual.Core;
 using UnityEngine;
+using TMPro;
+using Immutable.Passport;
 
 namespace HyperCasual.Runner
 {
@@ -18,11 +18,30 @@ namespace HyperCasual.Runner
         HyperCasualButton m_ShopButton;
         [SerializeField]
         AbstractGameEvent m_StartButtonEvent;
+        [SerializeField]
+        TextMeshProUGUI m_ConnectedAs;
+        [SerializeField]
+        HyperCasualButton m_LogoutButton;
 
         public override void Show() 
         {
             Debug.Log("Showing Main menu screen");
             base.Show();
+
+            if (Passport.Instance.HasCredentialsSaved())
+            {
+                m_ConnectedAs.gameObject.SetActive(true);
+                m_LogoutButton.gameObject.SetActive(true);
+                string? email = Passport.Instance.GetEmail();
+                m_ConnectedAs.text = email != null ? email : "Connected";
+            }
+        }
+
+        public void OnLogout()
+        {
+            Passport.Instance.Logout();
+            m_ConnectedAs.gameObject.SetActive(false);
+            m_LogoutButton.gameObject.SetActive(false);
         }
 
         void OnEnable()
