@@ -19,7 +19,6 @@ namespace HyperCasual.Core
         /// </summary>
         public void Raise()
         {
-            Debug.Log($"m_EventListeners.Count: {m_EventListeners.Count}");
             for (int i = m_EventListeners.Count - 1; i >= 0; i--)
                 m_EventListeners[i].OnEventRaised();
             Reset();

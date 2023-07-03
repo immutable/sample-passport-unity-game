@@ -2,6 +2,7 @@ using HyperCasual.Core;
 using UnityEngine;
 using TMPro;
 using Immutable.Passport;
+using System;
 
 namespace HyperCasual.Runner
 {
@@ -22,19 +23,31 @@ namespace HyperCasual.Runner
         TextMeshProUGUI m_ConnectedAs;
         [SerializeField]
         HyperCasualButton m_LogoutButton;
+        [SerializeField]
+        GameObject m_Loading;
 
-        public override void Show() 
+        public override async void Show() 
         {
             Debug.Log("Showing Main menu screen");
             base.Show();
 
-            if (Passport.Instance.HasCredentialsSaved())
+            try
             {
-                m_ConnectedAs.gameObject.SetActive(true);
-                m_LogoutButton.gameObject.SetActive(true);
-                string? email = Passport.Instance.GetEmail();
-                m_ConnectedAs.text = email != null ? email : "Connected";
+                if (Passport.Instance.HasCredentialsSaved())
+                {
+                    await Passport.Instance.ConnectSilent();
+                    m_ConnectedAs.gameObject.SetActive(true);
+                    m_LogoutButton.gameObject.SetActive(true);
+                    string? email = Passport.Instance.GetEmail();
+                    m_ConnectedAs.text = email != null ? email : "Connected";
+                }
             }
+            catch (Exception)
+            {
+                Debug.Log("Attempted to silently connect to Passport");
+            }
+            m_Loading.gameObject.SetActive(false);
+            m_StartButton.gameObject.SetActive(true);
         }
 
         public void OnLogout()

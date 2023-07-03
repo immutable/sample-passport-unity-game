@@ -34,6 +34,8 @@ namespace HyperCasual.Runner
         GameObject m_ConnectBrowserContainer;
         [SerializeField]
         TextMeshProUGUI m_VerificationCode;
+        [SerializeField]
+        GameObject m_VerifyingCodeProgress;
         
         /// <summary>
         /// The slider that displays the XP value 
@@ -100,6 +102,10 @@ namespace HyperCasual.Runner
 
         public void OnEnable()
         {
+            var connected = Passport.Instance.HasCredentialsSaved();
+            ShowContinueWithPassportButton(!connected);
+            ShowNextButton(connected);
+
             m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
 
