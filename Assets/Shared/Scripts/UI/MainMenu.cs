@@ -55,6 +55,7 @@ namespace HyperCasual.Runner
             Passport.Instance.Logout();
             m_ConnectedAs.gameObject.SetActive(false);
             m_LogoutButton.gameObject.SetActive(false);
+            SaveManager.Instance.LevelProgress = 0;
         }
 
         void OnEnable()

@@ -53,7 +53,7 @@ namespace HyperCasual.Runner
                 return;
             }
 
-#if UNITY_EDITOR
+// #if UNITY_EDITOR
             m_InputPosition = Mouse.current.position.ReadValue();
 
             if (Mouse.current.leftButton.isPressed)
@@ -68,23 +68,23 @@ namespace HyperCasual.Runner
             {
                 m_HasInput = false;
             }
-#else
-            if (Touch.activeTouches.Count > 0)
-            {
-                m_InputPosition = Touch.activeTouches[0].screenPosition;
+// #else
+//             if (Touch.activeTouches.Count > 0)
+//             {
+//                 m_InputPosition = Touch.activeTouches[0].screenPosition;
 
-                if (!m_HasInput)
-                {
-                    m_PreviousInputPosition = m_InputPosition;
-                }
+//                 if (!m_HasInput)
+//                 {
+//                     m_PreviousInputPosition = m_InputPosition;
+//                 }
                 
-                m_HasInput = true;
-            }
-            else
-            {
-                m_HasInput = false;
-            }
-#endif
+//                 m_HasInput = true;
+//             }
+//             else
+//             {
+//                 m_HasInput = false;
+//             }
+// #endif
 
             if (m_HasInput)
             {

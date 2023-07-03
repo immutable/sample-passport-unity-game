@@ -152,7 +152,10 @@ namespace HyperCasual.Runner
                 }
             } catch (Exception ex)
             {
-                Debug.Log($"TEST error: {ex.Message}");
+                Debug.Log($"Failed to connect: {ex.Message}");
+                ShowContinueWithPassportButton(false);
+                HideLoading();
+                ShowNextButton(true);
             }
         }
 
