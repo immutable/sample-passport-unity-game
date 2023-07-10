@@ -33,6 +33,7 @@ namespace HyperCasual.Runner
 
             try
             {
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
                 bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
                 if (hasCredsSaved)
                 {
@@ -42,6 +43,7 @@ namespace HyperCasual.Runner
                     string? email = await Passport.Instance.GetEmail();
                     m_ConnectedAs.text = email != null ? email : "Connected";
                 }
+#endif
             }
             catch (Exception)
             {

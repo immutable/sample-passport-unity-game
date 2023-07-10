@@ -10,6 +10,6 @@ public class RotateAnimation : MonoBehaviour
 
     void Update()
     {
-        transform.Rotate(Vector3.forward * -5);
+        transform.Rotate(Vector3.forward * -10);
     }
 }
