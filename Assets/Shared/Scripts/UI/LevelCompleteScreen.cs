@@ -100,9 +100,9 @@ namespace HyperCasual.Runner
             }
         }
 
-        public void OnEnable()
+        public async void OnEnable()
         {
-            var connected = Passport.Instance.HasCredentialsSaved();
+            var connected = await Passport.Instance.HasCredentialsSaved();
             ShowContinueWithPassportButton(!connected);
             ShowNextButton(connected);
 

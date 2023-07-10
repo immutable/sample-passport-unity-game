@@ -33,12 +33,13 @@ namespace HyperCasual.Runner
 
             try
             {
-                if (Passport.Instance.HasCredentialsSaved())
+                bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
+                if (hasCredsSaved)
                 {
                     await Passport.Instance.ConnectSilent();
                     m_ConnectedAs.gameObject.SetActive(true);
                     m_LogoutButton.gameObject.SetActive(true);
-                    string? email = Passport.Instance.GetEmail();
+                    string? email = await Passport.Instance.GetEmail();
                     m_ConnectedAs.text = email != null ? email : "Connected";
                 }
             }

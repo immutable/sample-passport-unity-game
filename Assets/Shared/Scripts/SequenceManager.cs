@@ -76,7 +76,7 @@ namespace HyperCasual.Gameplay
 
             //Create states
             // var splashDelay = new DelayState(m_SplashDelay); 
-            var passportDelay = new AsyncState(Passport.Init());
+            var passportDelay = new AsyncState(Passport.Init("ZJL7JvetcDFBNDlgRs5oJoxuAUUl6uQj"));
             m_MainMenuState = new State(OnMainMenuDisplayed);
             m_LevelSelectState = new State(OnLevelSelectionDisplayed);
             
