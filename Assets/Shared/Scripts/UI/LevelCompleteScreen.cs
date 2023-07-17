@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using Immutable.Passport;
-using Immutable.Passport.Auth;
+using Immutable.Passport.Model;
 using System;
 
 namespace HyperCasual.Runner

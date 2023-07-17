@@ -31,24 +31,24 @@ namespace HyperCasual.Runner
             Debug.Log("Showing Main menu screen");
             base.Show();
 
-            try
-            {
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
-                bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
-                if (hasCredsSaved)
+            bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
+            if (hasCredsSaved)
+            {
+                bool connected = await Passport.Instance.ConnectSilent();
+                if (connected)
                 {
-                    await Passport.Instance.ConnectSilent();
                     m_ConnectedAs.gameObject.SetActive(true);
                     m_LogoutButton.gameObject.SetActive(true);
                     string? email = await Passport.Instance.GetEmail();
                     m_ConnectedAs.text = email != null ? email : "Connected";
                 }
+                else
+                {
+                    Debug.Log("Attempted to silently connect to Passport"); 
+                }
+            }
 #endif
-            }
-            catch (Exception)
-            {
-                Debug.Log("Attempted to silently connect to Passport");
-            }
             m_Loading.gameObject.SetActive(false);
             m_StartButton.gameObject.SetActive(true);
         }
