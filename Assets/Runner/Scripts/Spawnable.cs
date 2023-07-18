@@ -50,10 +50,10 @@ namespace HyperCasual.Runner
                 m_MeshRenderers = gameObject.GetComponentsInChildren<MeshRenderer>();
             }
 
-            if (m_MeshRenderers != null && m_MeshRenderers.Length > 0)
-            {
-                m_BaseColor = m_MeshRenderers[0].sharedMaterial.color;
-            }
+            // if (m_MeshRenderers != null && m_MeshRenderers.Length > 0)
+            // {
+            //     m_BaseColor = m_MeshRenderers[0].sharedMaterial.color;
+            // }
 
             if (LevelManager.Instance != null)
             {
