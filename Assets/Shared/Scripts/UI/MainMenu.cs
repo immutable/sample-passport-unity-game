@@ -3,6 +3,7 @@ using UnityEngine;
 using TMPro;
 using Immutable.Passport;
 using System;
+using Cysharp.Threading.Tasks;
 
 namespace HyperCasual.Runner
 {
@@ -32,20 +33,25 @@ namespace HyperCasual.Runner
             base.Show();
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
-            bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
-            if (hasCredsSaved)
+            bool isConnected = await Passport.Instance.IsConnected();
+            if (isConnected)
             {
-                bool connected = await Passport.Instance.ConnectSilent();
-                if (connected)
+                await ShowConnectedEmail();
+            }
+            else
+            {
+                bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
+                if (hasCredsSaved)
                 {
-                    m_ConnectedAs.gameObject.SetActive(true);
-                    m_LogoutButton.gameObject.SetActive(true);
-                    string? email = await Passport.Instance.GetEmail();
-                    m_ConnectedAs.text = email != null ? email : "Connected";
-                }
-                else
-                {
-                    Debug.Log("Attempted to silently connect to Passport"); 
+                    bool connected = await Passport.Instance.ConnectSilent();
+                    if (connected)
+                    {
+                        await ShowConnectedEmail();
+                    }
+                    else
+                    {
+                        Debug.Log("Attempted to silently connect to Passport"); 
+                    }
                 }
             }
 #endif
@@ -53,9 +59,17 @@ namespace HyperCasual.Runner
             m_StartButton.gameObject.SetActive(true);
         }
 
-        public void OnLogout()
+        private async UniTask ShowConnectedEmail()
         {
-            Passport.Instance.Logout();
+            m_ConnectedAs.gameObject.SetActive(true);
+            m_LogoutButton.gameObject.SetActive(true);
+            string? email = await Passport.Instance.GetEmail();
+            m_ConnectedAs.text = email != null ? email : "Connected";
+        }
+
+        public async void OnLogout()
+        {
+            await Passport.Instance.Logout();
             m_ConnectedAs.gameObject.SetActive(false);
             m_LogoutButton.gameObject.SetActive(false);
             SaveManager.Instance.LevelProgress = 0;
