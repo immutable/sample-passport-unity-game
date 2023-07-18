@@ -2,8 +2,8 @@ using HyperCasual.Core;
 using UnityEngine;
 using TMPro;
 using Immutable.Passport;
-using System;
 using Cysharp.Threading.Tasks;
+using HyperCasual.Runner;
 
 namespace HyperCasual.Runner
 {
@@ -33,7 +33,7 @@ namespace HyperCasual.Runner
             base.Show();
 
 #if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
-            bool isConnected = await Passport.Instance.IsConnected();
+            bool isConnected = MemoryCache.IsConnected;
             if (isConnected)
             {
                 await ShowConnectedEmail();
@@ -73,6 +73,7 @@ namespace HyperCasual.Runner
             m_ConnectedAs.gameObject.SetActive(false);
             m_LogoutButton.gameObject.SetActive(false);
             SaveManager.Instance.LevelProgress = 0;
+            MemoryCache.IsConnected = false;
         }
 
         void OnEnable()

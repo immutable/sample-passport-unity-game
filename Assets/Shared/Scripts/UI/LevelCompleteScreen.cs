@@ -139,6 +139,8 @@ namespace HyperCasual.Runner
 
                     m_CompletedContainer.gameObject.SetActive(true);
 
+                    MemoryCache.IsConnected = true;
+
                     ShowContinueWithPassportButton(false);
                     HideLoading();
                     ShowNextButton(true);
