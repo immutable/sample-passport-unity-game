@@ -31,7 +31,7 @@ namespace HyperCasual.Runner
             Debug.Log("Showing Main menu screen");
             base.Show();
 
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID
             bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
             if (hasCredsSaved)
             {
