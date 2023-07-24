@@ -19,7 +19,7 @@ MonoBehaviour:
   LevelThickness: 0.1
   SnapToGrid: 1
   GridSize: 1
-  TerrainMaterial: {fileID: 2100000, guid: e2d13250d13954c7991517c511efc6be, type: 2}
+  TerrainMaterial: {fileID: 2100000, guid: 0874960be4542452892b027164a75540, type: 2}
   StartPrefab: {fileID: 9058167489692496298, guid: 021e1ce6e148542ccaa52b42d50df7df,
     type: 3}
   EndPrefab: {fileID: 8751349750269054652, guid: 32fa2c6232c2842b9ab5998a592d00bf,
