@@ -78,6 +78,7 @@ namespace HyperCasual.Runner
             LoadLevel(m_CurrentLevel, ref m_CurrentLevelGO);
             CreateTerrain(m_CurrentLevel, ref m_CurrentTerrainGO);
             PlaceLevelMarkers(m_CurrentLevel, ref m_LevelMarkersGO);
+            SetSkyBox();
             StartGame();
         }
 
@@ -280,6 +281,12 @@ namespace HyperCasual.Runner
             TerrainGenerator.CreateTerrain(terrainDimensions, levelDefinition.TerrainMaterial, ref terrainGameObject);
         }
 
+        private void SetSkyBox()
+        {
+            Material nightSkyBox = Resources.Load("Skybox1", typeof(Material)) as Material;
+            RenderSettings.skybox = nightSkyBox;
+        }
+        
         public void Win()
         {
             m_WinEvent.Raise();

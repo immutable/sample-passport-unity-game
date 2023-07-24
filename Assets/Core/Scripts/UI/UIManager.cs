@@ -31,7 +31,7 @@ namespace HyperCasual.Core
             m_Views = m_Root.GetComponentsInChildren<View>(true).ToList();
             Init();
             
-            m_ViewLayer.ResizeToSafeArea(m_Canvas);
+            // m_ViewLayer.ResizeToSafeArea(m_Canvas);
         }
 
         void Init()
