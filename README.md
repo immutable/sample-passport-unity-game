@@ -25,3 +25,5 @@ All Immutable Unity SDK Windows code, DLLs and resources are in `Assets/Immutabl
 * Log out of Passport
 * Get email
 * Checks if there are any credentials saved
+
+![](https://github.com/immutable/sample-passport-unity-game/blob/main/demo.gif)
