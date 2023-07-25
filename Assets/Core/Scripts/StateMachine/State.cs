@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace HyperCasual.Core
 {
@@ -36,7 +37,12 @@ namespace HyperCasual.Core
 
         public override IEnumerator Execute()
         {
-            yield return m_OnExecute.ToCoroutine();
+            yield return m_OnExecute.ToCoroutine(HandleException);
+        }
+
+        private void HandleException(Exception e)
+        {
+            Debug.Log($"AsyncState error: {e.Message}");
         }
     }
 }
