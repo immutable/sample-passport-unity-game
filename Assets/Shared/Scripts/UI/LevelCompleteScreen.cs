@@ -125,6 +125,13 @@ namespace HyperCasual.Runner
             {
                 ShowContinueWithPassportButton(false);
                 ShowLoading();
+
+#if UNITY_ANDROID
+                await Passport.Instance.ConnectPKCE();
+                ShowContinueWithPassportButton(false);
+                HideLoading();
+                ShowNextButton(true);
+#else
                 connectResponse = await Passport.Instance.Connect();
                 if (connectResponse != null)
                 {
@@ -152,6 +159,7 @@ namespace HyperCasual.Runner
                     HideLoading();
                     ShowNextButton(true);
                 }
+#endif
             } catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");

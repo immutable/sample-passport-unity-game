@@ -74,7 +74,7 @@ namespace HyperCasual.Gameplay
         void CreateMenuNavigationSequence()
         {
             // Create states
-            var passportDelay = new AsyncState(Passport.Init("ZJL7JvetcDFBNDlgRs5oJoxuAUUl6uQj"));
+            var passportDelay = new AsyncState(Passport.Init("ZJL7JvetcDFBNDlgRs5oJoxuAUUl6uQj", "imxsample://callback"));
             m_MainMenuState = new State(OnMainMenuDisplayed);
             m_LevelSelectState = new State(OnLevelSelectionDisplayed);
             
