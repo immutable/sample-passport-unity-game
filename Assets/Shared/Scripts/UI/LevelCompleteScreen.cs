@@ -128,38 +128,13 @@ namespace HyperCasual.Runner
 
 #if UNITY_ANDROID
                 await Passport.Instance.ConnectPKCE();
+#else
+                await Passport.Instance.Connect();
+#endif
+
                 ShowContinueWithPassportButton(false);
                 HideLoading();
                 ShowNextButton(true);
-#else
-                connectResponse = await Passport.Instance.Connect();
-                if (connectResponse != null)
-                {
-                    // Code confirmation required
-                    m_CompletedContainer.gameObject.SetActive(false);
-
-                    m_ConnectBrowserContainer.gameObject.SetActive(true);
-                    m_VerificationCode.text = connectResponse.code;
-                    
-                    await Passport.Instance.ConfirmCode();
-                    m_ConnectBrowserContainer.gameObject.SetActive(false);
-
-                    m_CompletedContainer.gameObject.SetActive(true);
-
-                    MemoryCache.IsConnected = true;
-
-                    ShowContinueWithPassportButton(false);
-                    HideLoading();
-                    ShowNextButton(true);
-                }
-                else
-                {
-                    // No need to confirm code, log user straight in
-                    ShowContinueWithPassportButton(false);
-                    HideLoading();
-                    ShowNextButton(true);
-                }
-#endif
             } catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");
