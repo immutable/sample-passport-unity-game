@@ -1,0 +1,4 @@
+Assets/Runner/Environment/Textures/Down_Tex.png filter=lfs diff=lfs merge=lfs -text
+Assets/Runner/Environment/Textures/Front_Tex.png filter=lfs diff=lfs merge=lfs -text
+Assets/Runner/Environment/Textures/Up_Tex.png filter=lfs diff=lfs merge=lfs -text
+*.dll filter=lfs diff=lfs merge=lfs -text
