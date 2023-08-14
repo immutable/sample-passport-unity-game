@@ -10,10 +10,15 @@
 
 # Sample Passport Unity Game
 
-All Immutable Unity SDK Windows code, DLLs and resources are in `Assets/ImmutableSDK`.
-
 ## Prerequisites
-- [git-lfs](https://git-lfs.github.com/): since `.dll` and image files are stored on Git Large File Storage, you must download and install git-lfs from [here](https://git-lfs.github.com/).
+- [git-lfs](https://git-lfs.github.com/): since large image files are stored on Git Large File Storage, you must download and install git-lfs from [here](https://git-lfs.github.com/).
+
+## Installation
+
+1. Clone the [unity-immutable-sdk](https://github.com/immutable/unity-immutable-sdk) repository
+2. Clone this repository inside the `unity-immutable-sdk` directory
+
+Alternatively, you could change the path to the Immutable Passport package yourself in the [manifest](https://github.com/immutable/sample-passport-unity-game/blob/main/Packages/manifest.json) file (`"com.immutable.passport": "file:../../src/Packages/Passport"`).
 
 ## Supported Platforms
 
