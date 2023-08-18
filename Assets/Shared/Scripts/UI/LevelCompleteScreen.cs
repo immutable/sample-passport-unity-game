@@ -126,7 +126,7 @@ namespace HyperCasual.Runner
                 ShowContinueWithPassportButton(false);
                 ShowLoading();
 
-#if UNITY_ANDROID
+#if UNITY_ANDROID || UNITY_IPHONE
                 await Passport.Instance.ConnectPKCE();
 #else
                 await Passport.Instance.Connect();
