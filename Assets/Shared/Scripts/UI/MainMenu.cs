@@ -64,7 +64,8 @@ namespace HyperCasual.Runner
             m_ConnectedAs.gameObject.SetActive(true);
             m_LogoutButton.gameObject.SetActive(true);
             string? email = await Passport.Instance.GetEmail();
-            m_ConnectedAs.text = email != null ? email : "Connected";
+            string? address = await Passport.Instance.GetAddress();
+            m_ConnectedAs.text = email != null && address != null ? $"{email}\n{address}" : "Connected";
         }
 
         public async void OnLogout()

@@ -56,6 +56,10 @@ MonoBehaviour:
   m_HorizontalSpeedFactor: 0.8
   m_ScaleVelocity: 2
   m_AutoMoveForward: 1
+  m_Fox: {fileID: 6566186312593469403}
+  m_foxOriginalTexture: {fileID: 2800000, guid: 79796825a2ee329439a7e85260061098,
+    type: 3}
+  m_foxBlueTexture: {fileID: 2800000, guid: 7b3d82feb8332064abf798e1476ed6d9, type: 3}
 --- !u!136 &8475646709700121470
 CapsuleCollider:
   m_ObjectHideFlags: 0
@@ -153,6 +157,11 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5936041138598338377, guid: 9fedecbd1aa68924b816f15cb97e611a,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 7666986768240843510, guid: 9fedecbd1aa68924b816f15cb97e611a,
         type: 3}
       propertyPath: m_ApplyRootMotion
@@ -163,6 +172,12 @@ PrefabInstance:
 --- !u!95 &2792663436395997169 stripped
 Animator:
   m_CorrespondingSourceObject: {fileID: 7666986768240843510, guid: 9fedecbd1aa68924b816f15cb97e611a,
+    type: 3}
+  m_PrefabInstance: {fileID: 5523404639045123335}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6566186312593469403 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1709350154809447132, guid: 9fedecbd1aa68924b816f15cb97e611a,
     type: 3}
   m_PrefabInstance: {fileID: 5523404639045123335}
   m_PrefabAsset: {fileID: 0}

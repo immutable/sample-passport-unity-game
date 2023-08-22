@@ -43,6 +43,11 @@ namespace HyperCasual.Runner
         [SerializeField]
         bool m_AutoMoveForward = true;
 
+        [SerializeField]
+        GameObject m_Fox;
+        [SerializeField] private Texture m_foxOriginalTexture;
+        [SerializeField] private Texture m_foxBlueTexture;
+
         Vector3 m_LastPosition;
         float m_StartHeight;
 
@@ -136,6 +141,8 @@ namespace HyperCasual.Runner
             }
 
             ResetSpeed();
+
+            m_Fox.GetComponent<Renderer>().material.SetTexture("_BaseMap", m_foxBlueTexture);
         }
 
         /// <summary>

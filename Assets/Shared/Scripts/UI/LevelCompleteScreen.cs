@@ -31,11 +31,15 @@ namespace HyperCasual.Runner
         [SerializeField]
         GameObject m_CompletedContainer;
         [SerializeField]
-        GameObject m_ConnectBrowserContainer;
+        GameObject m_MintedContainer;
         [SerializeField]
-        TextMeshProUGUI m_VerificationCode;
+        TextMeshProUGUI m_MintedTitle;
         [SerializeField]
-        GameObject m_VerifyingCodeProgress;
+        TextMeshProUGUI m_WalletLink1;
+        [SerializeField]
+        TextMeshProUGUI m_WalletLink2;
+        [SerializeField]
+        HyperCasualButton m_MintedNextButton;
         
         /// <summary>
         /// The slider that displays the XP value 
@@ -45,6 +49,8 @@ namespace HyperCasual.Runner
         int m_GoldValue;
 
         private ConnectResponse? connectResponse;
+
+        private string? address;
         
         /// <summary>
         /// The amount of gold to display on the celebration screen.
@@ -103,14 +109,20 @@ namespace HyperCasual.Runner
         public async void OnEnable()
         {
             var connected = await Passport.Instance.HasCredentialsSaved();
+            HideLoading();
             ShowContinueWithPassportButton(!connected);
             ShowNextButton(connected);
+            ShowCompletedContainer(true);
+            ShowMintedContainer(false);
 
             m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
 
             m_NextButton.RemoveListener(OnNextButtonClicked);
             m_NextButton.AddListener(OnNextButtonClicked);
+
+            m_MintedNextButton.RemoveListener(OnNextButtonClicked);
+            m_MintedNextButton.AddListener(OnNextButtonClicked);
         }
 
         void OnNextButtonClicked()
@@ -132,9 +144,20 @@ namespace HyperCasual.Runner
                 await Passport.Instance.Connect();
 #endif
 
-                ShowContinueWithPassportButton(false);
+                address = await Passport.Instance.GetAddress();
+
+                // Successfully connected
+                if (StarCount > 0){
+                    m_MintedTitle.text = $"You now own a Fox and {StarCount} tokens!";
+                }
+                else
+                {
+                    m_MintedTitle.text = $"You now own a Fox!";
+                }
                 HideLoading();
-                ShowNextButton(true);
+                ShowCompletedContainer(false);
+                ShowMintedContainer(true);
+                
             } catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");
@@ -142,6 +165,16 @@ namespace HyperCasual.Runner
                 HideLoading();
                 ShowNextButton(true);
             }
+        }
+
+        void ShowCompletedContainer(bool show)
+        {
+            m_CompletedContainer.gameObject.SetActive(show);
+        }
+
+        void ShowMintedContainer(bool show)
+        {
+            m_MintedContainer.gameObject.SetActive(show);
         }
 
         void ShowContinueWithPassportButton(bool show)
@@ -182,6 +215,14 @@ namespace HyperCasual.Runner
                 {
                     m_Stars[i].gameObject.SetActive(i < count);
                 }
+            }
+        }
+
+        public void OnWalletClicked()
+        {
+            if (address != null)
+            {
+                Application.OpenURL($"https://api.sandbox.x.immutable.com/v1/assets?user={address}");
             }
         }
     }
