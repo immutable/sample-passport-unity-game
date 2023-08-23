@@ -5,6 +5,12 @@ using UnityEngine.UI;
 using Immutable.Passport;
 using Immutable.Passport.Model;
 using System;
+using UnityEngine.Networking;
+using System.Collections;
+using System.Collections.Generic;
+using System.Net.Http;
+using Cysharp.Threading.Tasks;
+
 
 namespace HyperCasual.Runner
 {
@@ -33,13 +39,17 @@ namespace HyperCasual.Runner
         [SerializeField]
         GameObject m_MintedContainer;
         [SerializeField]
+        GameObject m_SkinContainer;
+
+        [SerializeField]
         TextMeshProUGUI m_MintedTitle;
         [SerializeField]
-        TextMeshProUGUI m_WalletLink1;
-        [SerializeField]
-        TextMeshProUGUI m_WalletLink2;
-        [SerializeField]
         HyperCasualButton m_MintedNextButton;
+
+        [SerializeField]
+        HyperCasualButton m_SkinUseButton;
+        [SerializeField]
+        HyperCasualButton m_SkinNextButton;
         
         /// <summary>
         /// The slider that displays the XP value 
@@ -114,15 +124,28 @@ namespace HyperCasual.Runner
             ShowNextButton(connected);
             ShowCompletedContainer(true);
             ShowMintedContainer(false);
+            ShowSkinContainer(false);
 
             m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
 
+            bool hasIceSkin = PlayerPrefsUtils.Read<bool>("hasIceSkin");
             m_NextButton.RemoveListener(OnNextButtonClicked);
-            m_NextButton.AddListener(OnNextButtonClicked);
+            Debug.Log($"LevelCompleteScreen OnEnable Completed Level {SaveManager.Instance.LevelProgress}");
+            if (SaveManager.Instance.LevelProgress == 2 && !hasIceSkin)
+            {
+                m_NextButton.AddListener(OnNextButtonClickedShowNewSkin);
+            }
+            else
+            {
+                m_NextButton.AddListener(OnNextButtonClicked);
+            }
 
             m_MintedNextButton.RemoveListener(OnNextButtonClicked);
             m_MintedNextButton.AddListener(OnNextButtonClicked);
+
+            m_SkinNextButton.RemoveListener(OnNextButtonClicked);
+            m_SkinNextButton.AddListener(OnNextButtonClicked);
         }
 
         void OnNextButtonClicked()
@@ -147,16 +170,30 @@ namespace HyperCasual.Runner
                 address = await Passport.Instance.GetAddress();
 
                 // Successfully connected
-                if (StarCount > 0){
-                    m_MintedTitle.text = $"You now own a Fox and {StarCount} tokens!";
+
+                // Mint fox
+                bool minted = await MintFox();
+                if (minted)
+                {
+                    Debug.Log($"Minted a fox");
+                    if (StarCount > 0) {
+                        m_MintedTitle.text = $"You now own a Fox and {StarCount} tokens!";
+                    }
+                    else
+                    {
+                        m_MintedTitle.text = $"You now own a Fox!";
+                    }
+                    HideLoading();
+                    ShowCompletedContainer(false);
+                    ShowMintedContainer(true);
                 }
                 else
                 {
-                    m_MintedTitle.text = $"You now own a Fox!";
+                    Debug.Log($"Failed to mint a fox");
+                    ShowContinueWithPassportButton(false);
+                    HideLoading();
+                    ShowNextButton(true);
                 }
-                HideLoading();
-                ShowCompletedContainer(false);
-                ShowMintedContainer(true);
                 
             } catch (Exception ex)
             {
@@ -167,6 +204,13 @@ namespace HyperCasual.Runner
             }
         }
 
+        void OnNextButtonClickedShowNewSkin()
+        {
+            Debug.Log("On Next Button Clicked Show New Skin");
+            ShowSkinContainer(true);
+            ShowCompletedContainer(false);
+        }
+
         void ShowCompletedContainer(bool show)
         {
             m_CompletedContainer.gameObject.SetActive(show);
@@ -175,6 +219,11 @@ namespace HyperCasual.Runner
         void ShowMintedContainer(bool show)
         {
             m_MintedContainer.gameObject.SetActive(show);
+        }
+
+        void ShowSkinContainer(bool show)
+        {
+            m_SkinContainer.gameObject.SetActive(show);
         }
 
         void ShowContinueWithPassportButton(bool show)
@@ -224,6 +273,20 @@ namespace HyperCasual.Runner
             {
                 Application.OpenURL($"https://api.sandbox.x.immutable.com/v1/assets?user={address}");
             }
+        }
+
+        async UniTask<bool> MintFox()
+        {
+            if (address != null)
+            {
+                var nvc = new List<KeyValuePair<string, string>>();
+                nvc.Add(new KeyValuePair<string, string>("toUserWallet", address));
+                using var client = new HttpClient();
+                using var req = new HttpRequestMessage(HttpMethod.Post, "http://localhost:6060/mint/character") { Content = new FormUrlEncodedContent(nvc) };
+                using var res = await client.SendAsync(req);
+                return res.IsSuccessStatusCode;
+            }
+            return false;
         }
     }
 }

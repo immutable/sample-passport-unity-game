@@ -142,7 +142,7 @@ namespace HyperCasual.Runner
 
             ResetSpeed();
 
-            m_Fox.GetComponent<Renderer>().material.SetTexture("_BaseMap", m_foxBlueTexture);
+            // m_Fox.GetComponent<Renderer>().material.SetTexture("_BaseMap", m_foxBlueTexture);
         }
 
         /// <summary>
