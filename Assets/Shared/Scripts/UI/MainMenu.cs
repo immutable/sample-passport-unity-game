@@ -75,6 +75,7 @@ namespace HyperCasual.Runner
             m_LogoutButton.gameObject.SetActive(false);
             SaveManager.Instance.LevelProgress = 0;
             MemoryCache.IsConnected = false;
+            MemoryCache.UseNewSkin = false;
         }
 
         void OnEnable()

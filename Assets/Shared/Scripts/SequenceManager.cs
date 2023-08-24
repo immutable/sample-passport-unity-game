@@ -209,6 +209,8 @@ namespace HyperCasual.Gameplay
             m_CurrentLevel = current;
             ShowUI<Hud>();
             AudioManager.Instance.StopMusic();
+
+            MemoryCache.CurrentLevel = m_LevelStates.IndexOf(current) + 1;
         }
     }
 }
