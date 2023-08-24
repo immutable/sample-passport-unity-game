@@ -128,12 +128,15 @@ namespace HyperCasual.Runner
             ShowMintedContainer(false);
             ShowSkinContainer(false);
 
+            // Continue with Passport button
             m_ContinuePassportButton.RemoveListener(OnContinueButtonClicked);
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
 
+            // Burn to use new skin button
             m_SkinUseButton.RemoveListener(OnBurnTokens);
             m_SkinUseButton.AddListener(OnBurnTokens);
 
+            // Next level button on Completed screen
             m_NextButton.RemoveListener(OnNextButtonClicked);
             // Show new skin when level 2 completes
             // And user is not already using it
@@ -146,11 +149,20 @@ namespace HyperCasual.Runner
                 m_NextButton.AddListener(OnNextButtonClicked);
             }
 
+            // Next level button on Minted Fox (and Tokens) screen
             m_MintedNextButton.RemoveListener(OnNextButtonClicked);
             m_MintedNextButton.AddListener(OnNextButtonClicked);
 
+            // Next level button on New Skin Unlocked screen
             m_SkinNextButton.RemoveListener(OnNextButtonClicked);
             m_SkinNextButton.AddListener(OnNextButtonClicked);
+
+            // If the user is connected to Passport, try and mint the tokens in the background
+            // if minting did not complete in time, we just ignore any errors
+            if (connected)
+            {
+                MintTokens();
+            }
         }
 
         void OnNextButtonClicked()
@@ -315,7 +327,22 @@ namespace HyperCasual.Runner
             }
         }
 
-        
+        private async void MintTokens()
+        {
+            try
+            {
+                address ??= await Passport.Instance.GetAddress();
+                if (StarCount > 0)
+                {
+                    bool mintedTokens = await api.MintTokens(StarCount, address);
+                    Debug.Log(mintedTokens ? "Minted tokens" : $"Failed to mint tokens");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.Log($"Error minting tokens: {ex.Message}");
+            }
+        }
 
         private async void OnBurnTokens()
         {
@@ -323,24 +350,24 @@ namespace HyperCasual.Runner
             m_SkinLoading.gameObject.SetActive(true);
             m_SkinUseButton.gameObject.SetActive(false);
 
+            address ??= await Passport.Instance.GetAddress();
             List<TokenModel> tokens = await api.GetTokens(3, address);
             if (tokens.Count == 3)
             {
                 try
                 {
-
                     List<NftTransferDetails> transferDetails = new List<NftTransferDetails>();
                     tokens.ForEach(delegate (TokenModel token)
                     {
+                        Debug.Log($"Got token ID: {token.token_id}");
                         transferDetails.Add(new NftTransferDetails(
                             "0x0000000000000000000000000000000000000000".ToLower(),
                             token.token_id,
                             ApiService.TOKEN_TOKEN_ADDRESS.ToLower()));
                     });
                     var response = await Passport.Instance.ImxBatchNftTransfer(transferDetails.ToArray());
-                    Debug.Log($"Batch transfer response {response}");
 
-                    m_SkinMessage.text = "You can use this skin!";
+                    m_SkinMessage.text = "You now have the skin and can use it!";
                     m_SkinMessage.gameObject.SetActive(true);
                     m_SkinUseButton.gameObject.SetActive(false);
                     MemoryCache.UseNewSkin = true;

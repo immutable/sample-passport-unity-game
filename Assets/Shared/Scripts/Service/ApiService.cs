@@ -66,9 +66,8 @@ namespace HyperCasual.Core
         public async Task<List<TokenModel>> GetTokens(int numOfTokens, string address)
         {
             using var client = new HttpClient();
-            HttpResponseMessage response = await client.GetAsync(
-                $"https://api.sandbox.x.immutable.com/v1/assets?collection={TOKEN_TOKEN_ADDRESS}&page_size={numOfTokens}&user={address}"
-                );
+            string url = $"https://api.sandbox.x.immutable.com/v1/assets?collection={TOKEN_TOKEN_ADDRESS}&page_size={numOfTokens}&user={address}";
+            HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {
                 string responseBody = await response.Content.ReadAsStringAsync();
