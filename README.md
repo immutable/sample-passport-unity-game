@@ -39,4 +39,9 @@ Alternatively, you could change the path to the Immutable Passport package yours
 * Get email
 * Checks if there are any credentials saved
 
+### Windows only
+
+* Single transfer
+* Bulk transfer
+
 ![](https://github.com/immutable/sample-passport-unity-game/blob/main/demo.gif)
