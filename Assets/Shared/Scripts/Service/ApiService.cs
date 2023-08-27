@@ -10,6 +10,7 @@ namespace HyperCasual.Core
     public class ApiService {
 
         public const string TOKEN_TOKEN_ADDRESS = "0x3765D19D5BC39b60718e43B4b12b30e87D383181";
+        public const string SKIN_TOKEN_ADDRESS = "0x35bec1b2e8a30af9bfd138555a633245519b607c";
 
         public async UniTask<bool> MintTokens(int num, string address)
         {
@@ -67,6 +68,23 @@ namespace HyperCasual.Core
         {
             using var client = new HttpClient();
             string url = $"https://api.sandbox.x.immutable.com/v1/assets?collection={TOKEN_TOKEN_ADDRESS}&page_size={numOfTokens}&user={address}";
+            HttpResponseMessage response = await client.GetAsync(url);
+            if (response.IsSuccessStatusCode)
+            {
+                string responseBody = await response.Content.ReadAsStringAsync();
+                ListTokenResponse tokenResponse = JsonConvert.DeserializeObject<ListTokenResponse>(responseBody);
+                return tokenResponse.result;
+            }
+            else
+            {
+                return new List<TokenModel>();
+            }
+        }
+
+        public async Task<List<TokenModel>> GetSkin(string address)
+        {
+            using var client = new HttpClient();
+            string url = $"https://api.sandbox.x.immutable.com/v1/assets?collection={SKIN_TOKEN_ADDRESS}&page_size=1&user={address}";
             HttpResponseMessage response = await client.GetAsync(url);
             if (response.IsSuccessStatusCode)
             {

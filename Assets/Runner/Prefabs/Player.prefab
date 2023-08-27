@@ -60,6 +60,8 @@ MonoBehaviour:
   m_foxOriginalTexture: {fileID: 2800000, guid: 79796825a2ee329439a7e85260061098,
     type: 3}
   m_foxBlueTexture: {fileID: 2800000, guid: 8232277d82366114097fe41d21a59eeb, type: 3}
+  m_foxGradientTexture: {fileID: 2800000, guid: 34eb75ccd6435b84ea7bfd33e5674257,
+    type: 3}
 --- !u!136 &8475646709700121470
 CapsuleCollider:
   m_ObjectHideFlags: 0

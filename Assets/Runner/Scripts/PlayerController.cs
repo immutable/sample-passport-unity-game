@@ -47,6 +47,7 @@ namespace HyperCasual.Runner
         GameObject m_Fox;
         [SerializeField] private Texture m_foxOriginalTexture;
         [SerializeField] private Texture m_foxBlueTexture;
+        [SerializeField] private Texture m_foxGradientTexture;
 
         Vector3 m_LastPosition;
         float m_StartHeight;
@@ -142,7 +143,8 @@ namespace HyperCasual.Runner
 
             ResetSpeed();
 
-            m_Fox.GetComponent<Renderer>().material.SetTexture("_BaseMap", MemoryCache.UseNewSkin ? m_foxBlueTexture : m_foxOriginalTexture);
+            m_Fox.GetComponent<Renderer>().material.SetTexture("_BaseMap", 
+                MemoryCache.UseCoolerSkin ? m_foxGradientTexture : (MemoryCache.UseNewSkin ? m_foxBlueTexture : m_foxOriginalTexture));
         }
 
         /// <summary>
