@@ -188,12 +188,14 @@ namespace HyperCasual.Runner
             m_BonusSkinNextButton.RemoveListener(OnNextButtonClicked);
             m_BonusSkinNextButton.AddListener(OnNextButtonClicked);
 
+#if UNITY_STANDALONE_WIN
             // If the user is connected to Passport, try and mint the tokens in the background
             // if minting did not complete in time, we just ignore any errors
             if (connected)
             {
                 MintTokens();
             }
+#endif
         }
 
         void OnNextButtonClicked()
@@ -223,8 +225,14 @@ namespace HyperCasual.Runner
                 // Get address and save it
                 Address = await Passport.Instance.GetAddress();
 
+#if UNITY_STANDALONE_WIN
                 // Successfully connected                
                 MintFoxAndTokens();
+#else
+                ShowContinueWithPassportButton(false);
+                HideLoading();
+                ShowNextButton(true);
+#endif
             } catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");
