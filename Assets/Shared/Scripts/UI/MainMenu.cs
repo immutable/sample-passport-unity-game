@@ -3,7 +3,6 @@ using UnityEngine;
 using TMPro;
 using Immutable.Passport;
 using Cysharp.Threading.Tasks;
-using HyperCasual.Runner;
 
 namespace HyperCasual.Runner
 {
@@ -50,7 +49,7 @@ namespace HyperCasual.Runner
                     }
                     else
                     {
-                        Debug.Log("Attempted to silently connect to Passport"); 
+                        Debug.Log("Attempted to silently connect to Passport");
                     }
                 }
             }
@@ -76,6 +75,7 @@ namespace HyperCasual.Runner
             SaveManager.Instance.LevelProgress = 0;
             MemoryCache.IsConnected = false;
             MemoryCache.UseNewSkin = false;
+            MemoryCache.UseCoolerSkin = false;
         }
 
         void OnEnable()
