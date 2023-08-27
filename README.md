@@ -20,7 +20,7 @@
 
 Alternatively, you could change the path to the Immutable Passport package yourself in the [manifest](https://github.com/immutable/sample-passport-unity-game/blob/main/Packages/manifest.json) file (`"com.immutable.passport": "file:../../src/Packages/Passport"`).
 
-## Quickstart
+## Quickstart for Windows only
 
 1. Navigate to `server/`
 2. Run `npm install`
