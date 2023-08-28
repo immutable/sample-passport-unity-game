@@ -174,6 +174,8 @@ namespace HyperCasual.Runner
             {
                 m_NextButton.AddListener(OnNextButtonClicked);
             }
+#else
+            m_NextButton.AddListener(OnNextButtonClicked);
 #endif
 
             // Next level button on Minted Fox (and Tokens) screen
