@@ -310,7 +310,7 @@ namespace HyperCasual.Runner
         {
             if (ConnectResponse != null)
             {
-                Application.OpenURL(ConnectResponse.url);
+                Application.OpenURL(ConnectResponse.Url);
             }
         }
 
