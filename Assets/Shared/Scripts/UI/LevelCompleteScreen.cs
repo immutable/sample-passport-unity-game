@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using HyperCasual.Core;
 using TMPro;
 using UnityEngine;
@@ -6,6 +7,7 @@ using Immutable.Passport;
 using Immutable.Passport.Model;
 using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 
 namespace HyperCasual.Runner
 {
@@ -224,8 +226,20 @@ namespace HyperCasual.Runner
 #else
                 await Passport.Instance.Connect();
 #endif
-                // Get address and save it
-                Address = await Passport.Instance.GetAddress();
+
+                // If in zkEVM mode, connect to EVM
+                if (SaveManager.Instance.ZkEvm)
+                {
+                    await Passport.Instance.ConnectEvm();
+                    // Get address and save it
+                    List<string> accounts = await Passport.Instance.ZkEvmRequestAccounts();
+                    Address = accounts[0];
+                }
+                else
+                {
+                    // Get address and save it
+                    Address = await Passport.Instance.GetAddress();
+                }
 
 #if UNITY_STANDALONE_WIN
                 // Successfully connected                
@@ -337,11 +351,34 @@ namespace HyperCasual.Runner
             }
         }
 
+        private async UniTask GetWalletAddress()
+        {
+            if (Address == null)
+            {
+                if (SaveManager.Instance.ZkEvm)
+                {
+                    List<string> accounts = await Passport.Instance.ZkEvmRequestAccounts();
+                    Address = accounts[0];
+                }
+                else
+                {
+                    Address = await Passport.Instance.GetAddress();
+                }
+            }
+        }
+
         public void OnWalletClicked()
         {
             if (Address != null)
             {
-                Application.OpenURL($"http://localhost:6060/wallet?user={Address}");
+                if (SaveManager.Instance.ZkEvm)
+                {
+                    Application.OpenURL($"https://explorer.testnet.immutable.com/address/{Address}");
+                }
+                else 
+                {
+                    Application.OpenURL($"http://localhost:6060/wallet?user={Address}");
+                }
             }
         }
 
@@ -409,7 +446,7 @@ namespace HyperCasual.Runner
                 MintingTokens = true;
                 try
                 {
-                    Address ??= await Passport.Instance.GetAddress();
+                    await GetWalletAddress();
                     if (StarCount > 0)
                     {
                         bool mintedTokens = await Api.MintTokens(StarCount, Address);
@@ -430,36 +467,51 @@ namespace HyperCasual.Runner
             m_SkinUnlockedLoading.gameObject.SetActive(true);
             m_SkinUnlockedGetButton.gameObject.SetActive(false);
 
-            Address ??= await Passport.Instance.GetAddress();
+            await GetWalletAddress();
             List<TokenModel> tokens = await Api.GetTokens(3, Address);
-            if (tokens.Count == 3)
+            if (tokens.Count >= 3)
             {
                 try
                 {
-                    // Burn tokens
-                    List<NftTransferDetails> transferDetails = new List<NftTransferDetails>();
-                    tokens.ForEach(delegate (TokenModel token)
+                    if (SaveManager.Instance.ZkEvm)
                     {
-                        Debug.Log($"Got token ID: {token.token_id}");
-                        transferDetails.Add(new NftTransferDetails(
-                            "0x0000000000000000000000000000000000000000",
-                            token.token_id,
-                            ApiService.TOKEN_TOKEN_ADDRESS.ToLower()));
-                    });
-                    var response = await Passport.Instance.ImxBatchNftTransfer(transferDetails.ToArray());
-
-                    // Mint skin
-                    bool mintedSkin = await Api.MintSkin(Address);
-                    if (mintedSkin)
-                    {
-
+                        string encodedData = await Api.GetTokenCraftSkinEcodedData(tokens[0].token_id, tokens[1].token_id, tokens[2].token_id);
+                        string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
+                            To = ApiService.ZK_TOKEN_TOKEN_ADDRESS,
+                            Data = encodedData,
+                            Value = "0"
+                        });
+                        Debug.Log($"Transaction hash: {transactionHash}");
                         MemoryCache.UseNewSkin = true;
                         ShowSkinUnlockedMessage("You now have the skin and can use it!");
                     }
                     else
                     {
-                        Debug.Log($"Something went wrong while minting skin");
-                        ShowSkinUnlockedMessage("Something went wrong :(");
+                        // Burn tokens
+                        List<NftTransferDetails> transferDetails = new List<NftTransferDetails>();
+                        tokens.ForEach(delegate (TokenModel token)
+                        {
+                            Debug.Log($"Got token ID: {token.token_id}");
+                            transferDetails.Add(new NftTransferDetails(
+                                "0x0000000000000000000000000000000000000000",
+                                token.token_id,
+                                ApiService.TOKEN_TOKEN_ADDRESS.ToLower()));
+                        });
+                        var response = await Passport.Instance.ImxBatchNftTransfer(transferDetails.ToArray());
+
+                        // Mint skin
+                        bool mintedSkin = await Api.MintSkin(Address);
+                        if (mintedSkin)
+                        {
+
+                            MemoryCache.UseNewSkin = true;
+                            ShowSkinUnlockedMessage("You now have the skin and can use it!");
+                        }
+                        else
+                        {
+                            Debug.Log($"Something went wrong while minting skin");
+                            ShowSkinUnlockedMessage("Something went wrong :(");
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -488,34 +540,49 @@ namespace HyperCasual.Runner
             m_BonusSkinLoading.gameObject.SetActive(true);
             m_BonusSkinGetButton.gameObject.SetActive(false);
 
-            Address ??= await Passport.Instance.GetAddress();
+            await GetWalletAddress();
             List<TokenModel> tokens = await Api.GetSkin(Address);
             if (tokens.Count > 0)
             {
                 try
                 {
-                    // Burn skin
-                    TokenModel skin = tokens[0];
-                    var response = await Passport.Instance.ImxTransfer(
-                        UnsignedTransferRequest.ERC721(
-                            "0x0000000000000000000000000000000000000000",
-                            skin.token_id,
-                            ApiService.SKIN_TOKEN_ADDRESS
-                        )
-                    );
-
-                    // Mint skin
-                    bool mintedSkin = await Api.MintSkin(Address);
-                    if (mintedSkin)
+                    if (SaveManager.Instance.ZkEvm)
                     {
-
+                        string encodedData = await Api.GetSkinCraftSkinEcodedData(tokens[0].token_id);
+                        string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
+                            To = ApiService.ZK_SKIN_TOKEN_ADDRESS,
+                            Data = encodedData,
+                            Value = "0"
+                        });
+                        Debug.Log($"Transaction hash: {transactionHash}");
                         MemoryCache.UseCoolerSkin = true;
                         ShowBonusSkinMessage("You now have a cooler skin and can use it!");
                     }
-                    else
+                    else 
                     {
-                        Debug.Log($"Something went wrong while minting skin");
-                        ShowBonusSkinMessage("Something went wrong :(");
+                        // Burn skin
+                        TokenModel skin = tokens[0];
+                        var response = await Passport.Instance.ImxTransfer(
+                            UnsignedTransferRequest.ERC721(
+                                "0x0000000000000000000000000000000000000000",
+                                skin.token_id,
+                                ApiService.SKIN_TOKEN_ADDRESS
+                            )
+                        );
+
+                        // Mint skin
+                        bool mintedSkin = await Api.MintSkin(Address);
+                        if (mintedSkin)
+                        {
+
+                            MemoryCache.UseCoolerSkin = true;
+                            ShowBonusSkinMessage("You now have a cooler skin and can use it!");
+                        }
+                        else
+                        {
+                            Debug.Log($"Something went wrong while minting skin");
+                            ShowBonusSkinMessage("Something went wrong :(");
+                        }
                     }
                 }
                 catch (Exception ex)

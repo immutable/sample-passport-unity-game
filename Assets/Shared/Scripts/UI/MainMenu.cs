@@ -1,5 +1,7 @@
+using System.Collections.Generic;
 using HyperCasual.Core;
 using UnityEngine;
+using UnityEngine.UI;
 using TMPro;
 using Immutable.Passport;
 using Cysharp.Threading.Tasks;
@@ -25,6 +27,8 @@ namespace HyperCasual.Runner
         HyperCasualButton m_LogoutButton;
         [SerializeField]
         GameObject m_Loading;
+        [SerializeField]
+        Toggle m_zkEVMToggle;
 
         public override async void Show() 
         {
@@ -56,6 +60,11 @@ namespace HyperCasual.Runner
 #endif
             m_Loading.gameObject.SetActive(false);
             m_StartButton.gameObject.SetActive(true);
+
+            m_zkEVMToggle.isOn = SaveManager.Instance.ZkEvm;
+            m_zkEVMToggle.onValueChanged.AddListener(delegate {
+                SaveManager.Instance.ZkEvm = m_zkEVMToggle.isOn;
+            });
         }
 
         private async UniTask ShowConnectedEmail()
@@ -63,7 +72,15 @@ namespace HyperCasual.Runner
             m_ConnectedAs.gameObject.SetActive(true);
             m_LogoutButton.gameObject.SetActive(true);
             string? email = await Passport.Instance.GetEmail();
-            string? address = await Passport.Instance.GetAddress();
+            string? address = null;
+            if (SaveManager.Instance.ZkEvm)
+            {
+                await Passport.Instance.ConnectEvm();
+                List<string> accounts = await Passport.Instance.ZkEvmRequestAccounts();
+                address = accounts[0];
+            } else {
+                address = await Passport.Instance.GetAddress();
+            }
             m_ConnectedAs.text = email != null && address != null ? $"{email}\n{address}" : "Connected";
         }
 
