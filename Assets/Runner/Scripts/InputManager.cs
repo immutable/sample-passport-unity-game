@@ -53,7 +53,7 @@ namespace HyperCasual.Runner
                 return;
             }
 
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN
+#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_EDITOR_OSX
             m_InputPosition = Mouse.current.position.ReadValue();
 
             if (Mouse.current.leftButton.isPressed)

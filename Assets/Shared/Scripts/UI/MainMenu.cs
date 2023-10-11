@@ -35,7 +35,6 @@ namespace HyperCasual.Runner
             Debug.Log("Showing Main menu screen");
             base.Show();
 
-#if UNITY_EDITOR_WIN || UNITY_STANDALONE_WIN || UNITY_ANDROID || UNITY_IPHONE
             bool isConnected = MemoryCache.IsConnected;
             if (isConnected)
             {
@@ -57,7 +56,7 @@ namespace HyperCasual.Runner
                     }
                 }
             }
-#endif
+
             m_Loading.gameObject.SetActive(false);
             m_StartButton.gameObject.SetActive(true);
 

@@ -158,7 +158,7 @@ namespace HyperCasual.Runner
 
             // Next level button on Completed screen
             m_NextButton.RemoveListener(OnNextButtonClicked);
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             // Show new skin when level 2 completes
             // And user is not already using it
             if (MemoryCache.CurrentLevel == 2 && !MemoryCache.UseNewSkin)
@@ -192,7 +192,7 @@ namespace HyperCasual.Runner
             m_BonusSkinNextButton.RemoveListener(OnNextButtonClicked);
             m_BonusSkinNextButton.AddListener(OnNextButtonClicked);
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             // If the user is connected to Passport, try and mint the tokens in the background
             // if minting did not complete in time, we just ignore any errors
             if (connected)
@@ -221,7 +221,7 @@ namespace HyperCasual.Runner
                 ShowContinueWithPassportButton(false);
                 ShowLoading();
 
-#if UNITY_ANDROID || UNITY_IPHONE
+#if UNITY_ANDROID || UNITY_IPHONE || (UNITY_STANDALONE_OSX && !UNITY_EDITOR_OSX)
                 await Passport.Instance.ConnectPKCE();
 #else
                 await Passport.Instance.Connect();
@@ -241,7 +241,7 @@ namespace HyperCasual.Runner
                     Address = await Passport.Instance.GetAddress();
                 }
 
-#if UNITY_STANDALONE_WIN
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
                 // Successfully connected                
                 MintFoxAndTokens();
 #else
