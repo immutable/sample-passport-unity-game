@@ -20,7 +20,7 @@
 
 Alternatively, you could change the path to the Immutable Passport package yourself in the [manifest](https://github.com/immutable/sample-passport-unity-game/blob/main/Packages/manifest.json) file (`"com.immutable.passport": "file:../../src/Packages/Passport"`).
 
-## Quickstart for Windows only
+## Quickstart for Windows and MacOS only
 
 1. Navigate to `server/`
 2. Run `npm install`
@@ -31,6 +31,8 @@ Alternatively, you could change the path to the Immutable Passport package yours
 
 * Windows
 * Android
+* iOS
+* MacOS
 
 ## SDK Features Implemented in Game
 
@@ -39,9 +41,10 @@ Alternatively, you could change the path to the Immutable Passport package yours
 * Get email
 * Checks if there are any credentials saved
 
-### Windows only
+### Windows and MacOS only
 
-* Single transfer
-* Bulk transfer
+* Immutable X Single transfer
+* Immutable X Bulk transfer
+* zkEVM Send transaction
 
 ![](https://github.com/immutable/sample-passport-unity-game/blob/main/demo.gif)
