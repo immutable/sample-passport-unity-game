@@ -197,6 +197,8 @@ const zkMintSkin = async (req: Request, res: Response, next: NextFunction) => {
 
 const zkMint = async (tokenAddress: string, req: Request, res: Response, next: NextFunction) => {
     try {
+        let markStart = Date.now();
+        console.log(`zkMint start ${tokenAddress}: ${Date.now() - markStart}`);
         let wallet: string = req.body.toUserWallet ?? null;
         console.log(`To user: ${wallet}`);
         let number = parseInt(req.body.number ?? "1");
@@ -210,15 +212,20 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
     
         const contract = new ethers.Contract(tokenAddress, abi, signer);
 
-        const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464');
-        await grantTx.wait();
+        // console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
+        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464');
+        // await grantTx.wait();
+        // console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
         for (let i = 0; i < number; i++)
         {
+            console.log(`zkMint start mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
             const tx = await contract.mintNextToken(wallet);
             await tx.wait();
+            console.log(`zkMint end mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
         }
 
+        console.log(`zkMint end ${tokenAddress}: ${Date.now() - markStart}`);
         // return response
         return res.status(200).json({
         });

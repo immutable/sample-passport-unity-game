@@ -475,12 +475,16 @@ namespace HyperCasual.Runner
                 {
                     if (SaveManager.Instance.ZkEvm)
                     {
+                        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        Debug.Log($"Start OnBurnTokens zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
+
                         string encodedData = await Api.GetTokenCraftSkinEcodedData(tokens[0].token_id, tokens[1].token_id, tokens[2].token_id);
                         string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
                             To = ApiService.ZK_TOKEN_TOKEN_ADDRESS,
                             Data = encodedData,
                             Value = "0"
                         });
+                        Debug.Log($"End OnBurnTokens zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         Debug.Log($"Transaction hash: {transactionHash}");
                         MemoryCache.UseNewSkin = true;
                         ShowSkinUnlockedMessage("You now have the skin and can use it!");
@@ -548,12 +552,15 @@ namespace HyperCasual.Runner
                 {
                     if (SaveManager.Instance.ZkEvm)
                     {
+                        long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                        Debug.Log($"Start BurnSkinForCoolerSkin zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         string encodedData = await Api.GetSkinCraftSkinEcodedData(tokens[0].token_id);
                         string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
                             To = ApiService.ZK_SKIN_TOKEN_ADDRESS,
                             Data = encodedData,
                             Value = "0"
                         });
+                        Debug.Log($"End BurnSkinForCoolerSkin zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         Debug.Log($"Transaction hash: {transactionHash}");
                         MemoryCache.UseCoolerSkin = true;
                         ShowBonusSkinMessage("You now have a cooler skin and can use it!");
