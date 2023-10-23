@@ -11,9 +11,13 @@
 # Sample Passport Unity Game
 
 ## Prerequisites
-- [git-lfs](https://git-lfs.github.com/): since large image files are stored on Git Large File Storage, you must download and install git-lfs from [here](https://git-lfs.github.com/).
+- Unity Editor 2021.3.26f1 (but newer versions should work too)
 
 ## Installation
+
+> :clipboard: Prerequisites
+>
+>[git-lfs](https://git-lfs.github.com/): since `.dll` files are stored on Git Large File Storage, you must download and install git-lfs from [here](https://git-lfs.github.com/).
 
 1. Clone the [unity-immutable-sdk](https://github.com/immutable/unity-immutable-sdk) repository
 2. Clone this repository inside the `unity-immutable-sdk` directory
