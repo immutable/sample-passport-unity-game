@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using HyperCasual.Core;
 using UnityEngine;
@@ -33,6 +34,8 @@ namespace HyperCasual.Runner
         public override async void Show() 
         {
             Debug.Log("Showing Main menu screen");
+            SaveManager.Instance.ZkEvm = true;
+            m_zkEVMToggle.isOn = true;
             base.Show();
 
             bool isConnected = MemoryCache.IsConnected;
@@ -68,19 +71,27 @@ namespace HyperCasual.Runner
 
         private async UniTask ShowConnectedEmail()
         {
-            m_ConnectedAs.gameObject.SetActive(true);
-            m_LogoutButton.gameObject.SetActive(true);
-            string? email = await Passport.Instance.GetEmail();
-            string? address = null;
-            if (SaveManager.Instance.ZkEvm)
+            try
             {
-                await Passport.Instance.ConnectEvm();
-                List<string> accounts = await Passport.Instance.ZkEvmRequestAccounts();
-                address = accounts[0];
-            } else {
-                address = await Passport.Instance.GetAddress();
+                m_ConnectedAs.gameObject.SetActive(true);
+                m_LogoutButton.gameObject.SetActive(true);
+                string? email = await Passport.Instance.GetEmail();
+                string? address = null;
+                if (SaveManager.Instance.ZkEvm)
+                {
+                    await Passport.Instance.ConnectEvm();
+                    List<string> accounts = await Passport.Instance.ZkEvmRequestAccounts();
+                    address = accounts[0];
+                } else {
+                    address = await Passport.Instance.GetAddress();
+                }
+                m_ConnectedAs.text = email != null && address != null ? $"{email}\n{address}" : "Connected";
             }
-            m_ConnectedAs.text = email != null && address != null ? $"{email}\n{address}" : "Connected";
+            catch (Exception ex)
+            {
+                Debug.Log($"Something went wrong while trying to get connected user details {ex.Message}");
+                m_ConnectedAs.text = "Connected";
+            }
         }
 
         public async void OnLogout()

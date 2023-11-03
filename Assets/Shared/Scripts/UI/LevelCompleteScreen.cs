@@ -48,6 +48,8 @@ namespace HyperCasual.Runner
 
         // Unlocked Skin
         [SerializeField]
+        TextMeshProUGUI m_SkinUnlockedTitle;
+        [SerializeField]
         TextMeshProUGUI m_SkinUnlockedErrorMessage;
         [SerializeField]
         HyperCasualButton m_SkinUnlockedGetButton;
@@ -55,6 +57,8 @@ namespace HyperCasual.Runner
         HyperCasualButton m_SkinUnlockedNextButton;
         [SerializeField]
         GameObject m_SkinUnlockedLoading;
+        [SerializeField]
+        GameObject m_CollectedSkinWallet;
 
         // Bonus
         [SerializeField]
@@ -149,8 +153,8 @@ namespace HyperCasual.Runner
             m_ContinuePassportButton.AddListener(OnContinueButtonClicked);
 
             // Burn to get new skin button
-            m_SkinUnlockedGetButton.RemoveListener(OnBurnTokens);
-            m_SkinUnlockedGetButton.AddListener(OnBurnTokens);
+            m_SkinUnlockedGetButton.RemoveListener(CollectNextRun);
+            m_SkinUnlockedGetButton.AddListener(CollectNextRun);
 
             // Get bonus skin button
             m_BonusSkinGetButton.RemoveListener(BurnSkinForCoolerSkin);
@@ -158,7 +162,7 @@ namespace HyperCasual.Runner
 
             // Next level button on Completed screen
             m_NextButton.RemoveListener(OnNextButtonClicked);
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_IPHONE || UNITY_ANDROID
             // Show new skin when level 2 completes
             // And user is not already using it
             if (MemoryCache.CurrentLevel == 2 && !MemoryCache.UseNewSkin)
@@ -168,9 +172,9 @@ namespace HyperCasual.Runner
             // Show bonus skin when level 3 completes
             // And user already uses the new skin
             // And user is not using cooler skin
-            else if (MemoryCache.CurrentLevel == 3 && MemoryCache.UseNewSkin && !MemoryCache.UseCoolerSkin)
+            else if (MemoryCache.CurrentLevel == 3 && !MemoryCache.UseNewSkin /*&& !MemoryCache.UseCoolerSkin*/)
             {
-                m_NextButton.AddListener(OnNextButtonClickedShowBonusSkin);
+                m_NextButton.AddListener(OnNextButtonClickedShowCollectedSkin);
             }
             else
             {
@@ -192,13 +196,13 @@ namespace HyperCasual.Runner
             m_BonusSkinNextButton.RemoveListener(OnNextButtonClicked);
             m_BonusSkinNextButton.AddListener(OnNextButtonClicked);
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_IPHONE || UNITY_ANDROID
             // If the user is connected to Passport, try and mint the tokens in the background
             // if minting did not complete in time, we just ignore any errors
-            if (connected)
-            {
-                MintTokens();
-            }
+            // if (connected)
+            // {
+            //     MintTokens();
+            // }
 #endif
         }
 
@@ -241,15 +245,22 @@ namespace HyperCasual.Runner
                     Address = await Passport.Instance.GetAddress();
                 }
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
-                // Successfully connected                
-                MintFoxAndTokens();
+#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX || UNITY_IPHONE || UNITY_ANDROID
+                // Successfully connected
+                // MintFoxAndTokens();
+                string numTokens = StarCount == 1 ? "a token" : $"{StarCount} tokens";
+                m_MintedTitle.text = $"You now own a Fox and {numTokens}!";
+
+                HideLoading();
+                ShowCompletedContainer(false);
+                ShowMintedContainer(true);
 #else
                 ShowContinueWithPassportButton(false);
                 HideLoading();
                 ShowNextButton(true);
 #endif
-            } catch (Exception ex)
+            } 
+            catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");
                 ShowContinueWithPassportButton(false);
@@ -263,8 +274,28 @@ namespace HyperCasual.Runner
             Debug.Log("On Next Button Clicked Show New Skin");
             ShowCompletedContainer(false);
             ShowMintedContainer(false);
-            ShowSkinUnlockedContainer(true);
             ShowBonusSkinContainer(false);
+
+            ShowSkinUnlockedTitle("New Skin Unlocked!");
+            m_CollectedSkinWallet.gameObject.SetActive(false);
+            ShowSkinUnlockedContainer(true);
+        }
+
+        void OnNextButtonClickedShowCollectedSkin()
+        {
+            Debug.Log("On Next Button Clicked Show Bonus Skin");
+            ShowCompletedContainer(false);
+            ShowMintedContainer(false);
+            ShowBonusSkinContainer(false);
+
+            ShowSkinUnlockedTitle("Collected new skin!");
+            ShowSkinUnlockedMessage("You now have the skin and can use it!\nCheck out your wallet");
+            m_SkinUnlockedContainer.gameObject.SetActive(true);
+            m_SkinUnlockedLoading.gameObject.SetActive(false);
+            m_SkinUnlockedErrorMessage.gameObject.SetActive(true);
+            m_SkinUnlockedGetButton.gameObject.SetActive(false);
+            m_CollectedSkinWallet.gameObject.SetActive(true);
+            MemoryCache.UseNewSkin = true;
         }
 
         void OnNextButtonClickedShowBonusSkin()
@@ -373,7 +404,8 @@ namespace HyperCasual.Runner
             {
                 if (SaveManager.Instance.ZkEvm)
                 {
-                    Application.OpenURL($"https://explorer.testnet.immutable.com/address/{Address}");
+                    Application.OpenURL("https://passport.sandbox.immutable.com/inventory/");
+                    // Application.OpenURL($"https://explorer.testnet.immutable.com/address/{Address}");
                 }
                 else 
                 {
@@ -421,7 +453,7 @@ namespace HyperCasual.Runner
             }
             else
             {
-                // User did not collect and tokens
+                // User did not collect any tokens
                 if (mintedFox)
                 {
                     m_MintedTitle.text = $"You now own a Fox!";
@@ -458,6 +490,37 @@ namespace HyperCasual.Runner
                     Debug.Log($"Error minting tokens: {ex.Message}");
                 }
                 MintingTokens = false;
+            }
+        }
+
+        private async void CollectNextRun()
+        {
+            Debug.Log("On Collect Next Run...");
+            OnNextButtonClicked();
+
+            await GetWalletAddress();
+            Debug.Log("Checking if user has 3 tokens...");
+            List<TokenModel> tokens = await Api.GetTokens(3, Address);
+            if (tokens.Count >= 3)
+            {
+                try
+                {
+                    long now = DateTimeOffset.Now.ToUnixTimeMilliseconds();
+                    Debug.Log($"Start OnBurnTokens zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
+
+                    string encodedData = await Api.GetTokenCraftSkinEcodedData(tokens[0].token_id, tokens[1].token_id, tokens[2].token_id);
+                    string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
+                        To = ApiService.ZK_TOKEN_TOKEN_ADDRESS,
+                        Data = encodedData,
+                        Value = "0"
+                    });
+                    Debug.Log($"End OnBurnTokens zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
+                    Debug.Log($"Transaction hash: {transactionHash}");
+                }
+                catch (Exception ex)
+                {
+                    Debug.Log($"Something went wrong while burning tokens {ex.Message}");
+                }
             }
         }
 
@@ -528,6 +591,11 @@ namespace HyperCasual.Runner
             {
                 ShowSkinUnlockedMessage("Not enough tokens to burn");
             }
+        }
+
+        private void ShowSkinUnlockedTitle(string message)
+        {
+            m_SkinUnlockedTitle.text = message;
         }
 
         private void ShowSkinUnlockedMessage(string message)

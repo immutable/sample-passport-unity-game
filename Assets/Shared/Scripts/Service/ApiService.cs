@@ -14,6 +14,7 @@ namespace HyperCasual.Core
         public const string ZK_TOKEN_TOKEN_ADDRESS = "0x922518aCd77B99d8ea65f19018E5cdC215dd89D8";
         public const string SKIN_TOKEN_ADDRESS = "0x35bec1b2e8a30af9bfd138555a633245519b607c";
         public const string ZK_SKIN_TOKEN_ADDRESS = "0x04f272408342086D66F4cD72d81260dc616a6e08";
+        private const string SERVER_BASE_URL = "http://3.26.146.24:6060";
 
         public async UniTask<bool> MintTokens(int num, string address)
         {
@@ -26,7 +27,7 @@ namespace HyperCasual.Core
                     new KeyValuePair<string, string>("number", $"{num}")
                 };
                 using var client = new HttpClient();
-                string url = SaveManager.Instance.ZkEvm ? "http://localhost:6060/zkmint/token": "http://localhost:6060/mint/token";
+                string url = SaveManager.Instance.ZkEvm ? $"{SERVER_BASE_URL}/zkmint/token": $"{SERVER_BASE_URL}/mint/token";
                 using var req = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(nvc) };
                 using var res = await client.SendAsync(req);
                 return res.IsSuccessStatusCode;
@@ -44,7 +45,7 @@ namespace HyperCasual.Core
                     new KeyValuePair<string, string>("toUserWallet", address)
                 };
                 using var client = new HttpClient();
-                string url = SaveManager.Instance.ZkEvm ? "http://localhost:6060/zkmint/character": "http://localhost:6060/mint/character";
+                string url = SaveManager.Instance.ZkEvm ? $"{SERVER_BASE_URL}/zkmint/character": $"{SERVER_BASE_URL}/mint/character";
                 using var req = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(nvc) };
                 using var res = await client.SendAsync(req);
                 return res.IsSuccessStatusCode;
@@ -62,7 +63,7 @@ namespace HyperCasual.Core
                     new KeyValuePair<string, string>("toUserWallet", address)
                 };
                 using var client = new HttpClient();
-                string url = SaveManager.Instance.ZkEvm ? "http://localhost:6060/zkmint/skin": "http://localhost:6060/mint/skin";
+                string url = SaveManager.Instance.ZkEvm ? $"{SERVER_BASE_URL}/zkmint/skin": $"{SERVER_BASE_URL}/mint/skin";
                 using var req = new HttpRequestMessage(HttpMethod.Post, url) { Content = new FormUrlEncodedContent(nvc) };
                 using var res = await client.SendAsync(req);
                 return res.IsSuccessStatusCode;
@@ -121,7 +122,7 @@ namespace HyperCasual.Core
                 new KeyValuePair<string, string>("tokenId3", tokenId3)
             };
             using var client = new HttpClient();
-            using var req = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:6060/zk/token/craftskin/encodeddata") { Content = new FormUrlEncodedContent(nvc) };
+            using var req = new HttpRequestMessage(HttpMethod.Post, $"{SERVER_BASE_URL}/zk/token/craftskin/encodeddata") { Content = new FormUrlEncodedContent(nvc) };
             using var res = await client.SendAsync(req);
             
             string responseBody = await res.Content.ReadAsStringAsync();
@@ -136,7 +137,7 @@ namespace HyperCasual.Core
                 new KeyValuePair<string, string>("tokenId", tokenId)
             };
             using var client = new HttpClient();
-            using var req = new HttpRequestMessage(HttpMethod.Post, $"http://localhost:6060/zk/skin/craftskin/encodeddata") { Content = new FormUrlEncodedContent(nvc) };
+            using var req = new HttpRequestMessage(HttpMethod.Post, $"{SERVER_BASE_URL}/zk/skin/craftskin/encodeddata") { Content = new FormUrlEncodedContent(nvc) };
             using var res = await client.SendAsync(req);
 
             string responseBody = await res.Content.ReadAsStringAsync();
