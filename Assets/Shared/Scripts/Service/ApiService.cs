@@ -10,11 +10,11 @@ namespace HyperCasual.Core
 {
     public class ApiService {
 
-        public const string TOKEN_TOKEN_ADDRESS = "0x3765D19D5BC39b60718e43B4b12b30e87D383181";
-        public const string ZK_TOKEN_TOKEN_ADDRESS = "0x922518aCd77B99d8ea65f19018E5cdC215dd89D8";
-        public const string SKIN_TOKEN_ADDRESS = "0x35bec1b2e8a30af9bfd138555a633245519b607c";
-        public const string ZK_SKIN_TOKEN_ADDRESS = "0x04f272408342086D66F4cD72d81260dc616a6e08";
-        private const string SERVER_BASE_URL = "http://3.26.146.24:6060";
+        public const string TOKEN_TOKEN_ADDRESS = "0x017d62f8e10fe96FA59d6586c81AC123cdAedf57";
+        public const string ZK_TOKEN_TOKEN_ADDRESS = "0xD7cFf4E273A9dD73d07a145Ab26b4233e84eDc8c";
+        public const string SKIN_TOKEN_ADDRESS = "0x79c9f3EfC5166d969ec49cf9D0163d9A37082890";
+        public const string ZK_SKIN_TOKEN_ADDRESS = "0x6DE3D346aEECE3CA23E2A8e194c45875fb5D7A3B";
+        private const string SERVER_BASE_URL = "http://192.168.0.110:6060";
 
         public async UniTask<bool> MintTokens(int num, string address)
         {
@@ -75,7 +75,7 @@ namespace HyperCasual.Core
         {
             using var client = new HttpClient();
             string url = SaveManager.Instance.ZkEvm ? 
-            $"https://api.sandbox.immutable.com/v1/chains/imtbl-zkevm-testnet/accounts/{address}/nfts?contract_address={ZK_TOKEN_TOKEN_ADDRESS}" 
+            $"https://api.dev.immutable.com/v1/chains/imtbl-zkevm-devnet/accounts/{address}/nfts?contract_address={ZK_TOKEN_TOKEN_ADDRESS}" 
             : $"https://api.sandbox.x.immutable.com/v1/assets?collection={TOKEN_TOKEN_ADDRESS}&page_size={numOfTokens}&user={address}";
             Debug.Log($"Get Tokens url: {url}");
             HttpResponseMessage response = await client.GetAsync(url);
