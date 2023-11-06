@@ -2,23 +2,32 @@ import { Request, Response, NextFunction } from 'express';
 import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers';
 import { Wallet } from '@ethersproject/wallet';
 import { ethers } from 'ethers';
-import { createStarkSigner, generateLegacyStarkPrivateKey, Configuration } from '@imtbl/core-sdk';
+import { createStarkSigner, generateLegacyStarkPrivateKey, Configuration, Config } from '@imtbl/core-sdk';
 import { config, provider as imxProvider, immutablexClient as imxClient } from '@imtbl/sdk';
 import env from '../config/client';
 const baseConfig = new config.ImmutableConfiguration({
     environment: config.Environment.SANDBOX
   });
-const client = new imxClient.ImmutableXClient({baseConfig: baseConfig});
+const client = new imxClient.ImmutableXClient({
+    baseConfig: baseConfig,
+    /*overrides: {
+    immutableXConfig: Config.createConfig({
+        basePath: 'https://api.dev.x.immutable.com',
+        chainID: 5,
+        coreContractAddress: '0xd05323731807A35599BF9798a1DE15e89d6D6eF1',
+        registrationContractAddress: '0x7EB840223a3b1E0e8D54bF8A6cd83df5AFfC88B2',
+      }),
+  }*/});
 
 const provider = new AlchemyProvider(env.ethNetwork, env.alchemyApiKey);
-const zkEvmProvider = new JsonRpcProvider('https://rpc.testnet.immutable.com');
+const zkEvmProvider = new JsonRpcProvider('https://rpc.dev.immutable.com');
 
 const waitForTransaction = async (promise: Promise<string>) => {
     const txId = await promise;
     console.log('Waiting for transaction', {
       txId,
-      etherscanLink: `https://goerli.etherscan.io/tx/${txId}`,
-      alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-goerli/tx/${txId}`,
+      etherscanLink: `https://sepolia.etherscan.io/tx/${txId}`,
+      alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-sepolia/tx/${txId}`,
     });
     const receipt = await provider.waitForTransaction(txId);
     if (receipt.status === 0) {
@@ -47,24 +56,25 @@ const mint = async (tokenAddress: string, req: Request, res: Response, next: Nex
         let number = parseInt(req.body.number ?? "1");
 
         const signer = new Wallet(env.privateKey).connect(provider);
+        console.log(signer.address);
         const pk = await generateLegacyStarkPrivateKey(signer);
         const starkSigner = createStarkSigner(pk);
         // Setting environment to just sandbox doesn't work
         // so need to override instead
-        const overrides = {
-            immutableXConfig: {
-                apiConfiguration: new Configuration(),
-                ethConfiguration: {
-                    coreContractAddress: '0x7917eDb51ecD6CdB3F9854c3cc593F33de10c623',
-                    registrationContractAddress: '0x1C97Ada273C9A52253f463042f29117090Cd7D83',
-                    chainID: 5
-                }
-            }
-        };
+        // const overrides = {
+        //     immutableXConfig: {
+        //         apiConfiguration: new Configuration(),
+        //         ethConfiguration: {
+        //             coreContractAddress: '0x3e6e01355bB66925a65D372bf9c9f3835d9964fA',
+        //             registrationContractAddress: '0x2F76E4e48A5f9e517765B70a4DEc67781d35A199',
+        //             chainID: 11155111
+        //         }
+        //     }
+        // };
         const minter = new imxProvider.GenericIMXProvider(
             new imxProvider.ProviderConfiguration({
                 baseConfig,
-                overrides
+                // overrides
             }),
             signer,
             starkSigner
@@ -213,14 +223,14 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
         const contract = new ethers.Contract(tokenAddress, abi, signer);
 
         // console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
-        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464');
+        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464', { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
         // await grantTx.wait();
         // console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
         for (let i = 0; i < number; i++)
         {
             console.log(`zkMint start mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
-            const tx = await contract.mintNextToken(wallet);
+            const tx = await contract.mintNextToken(wallet, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
             await tx.wait();
             console.log(`zkMint end mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
         }
