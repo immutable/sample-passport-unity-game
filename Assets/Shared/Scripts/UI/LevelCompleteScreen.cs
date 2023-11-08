@@ -404,7 +404,7 @@ namespace HyperCasual.Runner
             {
                 if (SaveManager.Instance.ZkEvm)
                 {
-                    Application.OpenURL("https://passport.dev.immutable.com/inventory/");
+                    Application.OpenURL("https://passport.sandbox.immutable.com/inventory/");
                     // Application.OpenURL($"https://explorer.testnet.immutable.com/address/{Address}");
                 }
                 else 

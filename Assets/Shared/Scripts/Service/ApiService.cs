@@ -14,7 +14,7 @@ namespace HyperCasual.Core
         public const string ZK_TOKEN_TOKEN_ADDRESS = "0xD7cFf4E273A9dD73d07a145Ab26b4233e84eDc8c";
         public const string SKIN_TOKEN_ADDRESS = "0x79c9f3EfC5166d969ec49cf9D0163d9A37082890";
         public const string ZK_SKIN_TOKEN_ADDRESS = "0x6DE3D346aEECE3CA23E2A8e194c45875fb5D7A3B";
-        private const string SERVER_BASE_URL = "http://192.168.0.110:6060";
+        private const string SERVER_BASE_URL = "http://3.26.146.24:6060";
 
         public async UniTask<bool> MintTokens(int num, string address)
         {
