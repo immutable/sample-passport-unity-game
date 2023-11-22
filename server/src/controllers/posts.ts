@@ -213,14 +213,14 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
         const contract = new ethers.Contract(tokenAddress, abi, signer);
 
         // console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
-        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464');
+        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464', { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
         // await grantTx.wait();
         // console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
         for (let i = 0; i < number; i++)
         {
             console.log(`zkMint start mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
-            const tx = await contract.mintNextToken(wallet);
+            const tx = await contract.mintNextToken(wallet, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
             await tx.wait();
             console.log(`zkMint end mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
         }
