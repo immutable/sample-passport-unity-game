@@ -222,9 +222,9 @@ namespace HyperCasual.Runner
                 ShowLoading();
 
 #if UNITY_ANDROID || UNITY_IPHONE || (UNITY_STANDALONE_OSX && !UNITY_EDITOR_OSX)
-                await Passport.Instance.ConnectPKCE();
+                await Passport.Instance.ConnectImxPKCE();
 #else
-                await Passport.Instance.Connect();
+                await Passport.Instance.ConnectImx();
 #endif
 
                 // If in zkEVM mode, connect to EVM
@@ -334,7 +334,7 @@ namespace HyperCasual.Runner
         {
             if (ConnectResponse != null)
             {
-                Application.OpenURL(ConnectResponse.Url);
+                Application.OpenURL(ConnectResponse.url);
             }
         }
 
@@ -480,9 +480,9 @@ namespace HyperCasual.Runner
 
                         string encodedData = await Api.GetTokenCraftSkinEcodedData(tokens[0].token_id, tokens[1].token_id, tokens[2].token_id);
                         string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
-                            To = ApiService.ZK_TOKEN_TOKEN_ADDRESS,
-                            Data = encodedData,
-                            Value = "0"
+                            to = ApiService.ZK_TOKEN_TOKEN_ADDRESS,
+                            data = encodedData,
+                            value = "0"
                         });
                         Debug.Log($"End OnBurnTokens zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         Debug.Log($"Transaction hash: {transactionHash}");
@@ -556,9 +556,9 @@ namespace HyperCasual.Runner
                         Debug.Log($"Start BurnSkinForCoolerSkin zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         string encodedData = await Api.GetSkinCraftSkinEcodedData(tokens[0].token_id);
                         string transactionHash = await Passport.Instance.ZkEvmSendTransaction(new TransactionRequest() {
-                            To = ApiService.ZK_SKIN_TOKEN_ADDRESS,
-                            Data = encodedData,
-                            Value = "0"
+                            to = ApiService.ZK_SKIN_TOKEN_ADDRESS,
+                            data = encodedData,
+                            value = "0"
                         });
                         Debug.Log($"End BurnSkinForCoolerSkin zkEVMSendTransaction {DateTimeOffset.Now.ToUnixTimeMilliseconds() - now}");
                         Debug.Log($"Transaction hash: {transactionHash}");

@@ -45,14 +45,17 @@ namespace HyperCasual.Runner
                 bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
                 if (hasCredsSaved)
                 {
-                    bool connected = await Passport.Instance.ConnectSilent();
+                    bool connected = await Passport.Instance.ConnectImxSilent();
                     if (connected)
                     {
                         await ShowConnectedEmail();
                     }
                     else
                     {
-                        Debug.Log("Attempted to silently connect to Passport");
+                        Debug.Log("Attempted to silently connect to Passport, but couldn't so logged out");
+                        ResetValues();
+                        hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
+                        Debug.Log($"After logged out is credentials still there? {hasCredsSaved}");
                     }
                 }
             }
@@ -88,6 +91,11 @@ namespace HyperCasual.Runner
             await Passport.Instance.Logout();
             m_ConnectedAs.gameObject.SetActive(false);
             m_LogoutButton.gameObject.SetActive(false);
+            ResetValues();
+        }
+
+        private void ResetValues()
+        {
             SaveManager.Instance.LevelProgress = 0;
             MemoryCache.IsConnected = false;
             MemoryCache.UseNewSkin = false;
