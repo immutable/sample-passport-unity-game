@@ -11,10 +11,10 @@ namespace HyperCasual.Core
 {
     public class ApiService {
 
-        public const string TOKEN_TOKEN_ADDRESS = "0x3765D19D5BC39b60718e43B4b12b30e87D383181";
-        public const string ZK_TOKEN_TOKEN_ADDRESS = "0x35beC1b2E8a30aF9bfd138555a633245519b607C";
-        public const string SKIN_TOKEN_ADDRESS = "0x35bec1b2e8a30af9bfd138555a633245519b607c";
-        public const string ZK_SKIN_TOKEN_ADDRESS = "0xebA9b0960f0cAb30256FDCa3De606d4685C0AC40";
+        public const string TOKEN_TOKEN_ADDRESS = "";
+        public const string ZK_TOKEN_TOKEN_ADDRESS = "";
+        public const string SKIN_TOKEN_ADDRESS = "";
+        public const string ZK_SKIN_TOKEN_ADDRESS = "";
         private const string SERVER_BASE_URL = "http://localhost:6060";
 
         public async UniTask<bool> MintTokens(int num, string address)

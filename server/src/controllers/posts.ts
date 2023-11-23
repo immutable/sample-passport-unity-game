@@ -10,15 +10,15 @@ const baseConfig = new config.ImmutableConfiguration({
   });
 const client = new imxClient.ImmutableXClient({baseConfig: baseConfig});
 
-const provider = new AlchemyProvider(env.ethNetwork, env.alchemyApiKey);
+const provider = new JsonRpcProvider(`https://eth-sepolia.g.alchemy.com/v2/${env.alchemyApiKey}`);
 const zkEvmProvider = new JsonRpcProvider('https://rpc.testnet.immutable.com');
 
 const waitForTransaction = async (promise: Promise<string>) => {
     const txId = await promise;
     console.log('Waiting for transaction', {
       txId,
-      etherscanLink: `https://goerli.etherscan.io/tx/${txId}`,
-      alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-goerli/tx/${txId}`,
+      etherscanLink: `https://sepolia.etherscan.io/tx/${txId}`,
+      alchemyLink: `https://dashboard.alchemyapi.io/mempool/eth-sepolia/tx/${txId}`,
     });
     const receipt = await provider.waitForTransaction(txId);
     if (receipt.status === 0) {
@@ -47,24 +47,12 @@ const mint = async (tokenAddress: string, req: Request, res: Response, next: Nex
         let number = parseInt(req.body.number ?? "1");
 
         const signer = new Wallet(env.privateKey).connect(provider);
+        console.log(`signer address: ${signer.address}`);
         const pk = await generateLegacyStarkPrivateKey(signer);
         const starkSigner = createStarkSigner(pk);
-        // Setting environment to just sandbox doesn't work
-        // so need to override instead
-        const overrides = {
-            immutableXConfig: {
-                apiConfiguration: new Configuration(),
-                ethConfiguration: {
-                    coreContractAddress: '0x7917eDb51ecD6CdB3F9854c3cc593F33de10c623',
-                    registrationContractAddress: '0x1C97Ada273C9A52253f463042f29117090Cd7D83',
-                    chainID: 5
-                }
-            }
-        };
         const minter = new imxProvider.GenericIMXProvider(
             new imxProvider.ProviderConfiguration({
                 baseConfig,
-                overrides
             }),
             signer,
             starkSigner
@@ -89,6 +77,7 @@ const mint = async (tokenAddress: string, req: Request, res: Response, next: Nex
         console.log('tokenId');
         console.log(tokenId);
 
+        console.log('Registering minter offchain...');
         const registerImxResult = await minter.registerOffchain();
 
         if (registerImxResult.tx_hash === '') {
@@ -212,10 +201,10 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
     
         const contract = new ethers.Contract(tokenAddress, abi, signer);
 
-        // console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
-        // const grantTx = await contract.grantMinterRole('0xEED04A543eb26cB79Fc41548990e105C08B16464', { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
-        // await grantTx.wait();
-        // console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
+        console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
+        const grantTx = await contract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        await grantTx.wait();
+        console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
         for (let i = 0; i < number; i++)
         {
