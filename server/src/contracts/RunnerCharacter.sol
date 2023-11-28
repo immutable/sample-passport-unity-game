@@ -30,9 +30,19 @@ contract RunnerCharacter is ImmutableERC721 {
         )
     {}
 
+    // Mints the next token
     function mintNextToken(address to) public returns (uint256) {
         uint256 tokenId = ++_currentTokenId;
         _mintByID(to, tokenId);
         return tokenId;
+    }
+
+    // Mints number of tokens specified
+    function mintNextTokenByQuantity(address to, uint256 quantity) public {
+        uint256[] memory tokenIds = new uint256[](quantity);
+        for (uint256 i = 0; i < quantity; i++) {
+            tokenIds[i] = ++_currentTokenId;
+        }
+        _mintBatchByID(to, tokenIds);
     }
 }

@@ -44,7 +44,7 @@ contract RunnerToken is ImmutableERC721 {
         return tokenId;
     }
 
-    // Mints the next token by the given quantity
+    // Mints number of tokens specified
     function mintNextTokenByQuantity(address to, uint256 quantity) public {
         uint256[] memory tokenIds = new uint256[](quantity);
         for (uint256 i = 0; i < quantity; i++) {
@@ -53,6 +53,7 @@ contract RunnerToken is ImmutableERC721 {
         _mintBatchByID(to, tokenIds);
     }
 
+    // Burns the three tokens specified and crafts a skin to the caller
     function craftSkin(
         uint256 tokenId1,
         uint256 tokenId2,
