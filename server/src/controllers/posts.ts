@@ -196,7 +196,8 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
 
         const abi = [
             'function grantMinterRole(address user) public',
-            'function mintNextToken(address too) public'
+            'function mintNextToken(address too) public',
+            'function mintNextTokenByQuantity(address to, uint256 quantity)'
         ];
     
         const contract = new ethers.Contract(tokenAddress, abi, signer);
@@ -206,12 +207,18 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
         await grantTx.wait();
         console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
-        for (let i = 0; i < number; i++)
-        {
-            console.log(`zkMint start mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
-            const tx = await contract.mintNextToken(wallet, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        if (number > 1) {
+            console.log(`zkMint start mintNextTokenByQuantity ${number} ${tokenAddress}: ${Date.now() - markStart}`);
+            const tx = await contract.mintNextTokenByQuantity(wallet, number, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
             await tx.wait();
-            console.log(`zkMint end mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
+            console.log(`zkMint end mintNextTokenByQuantity ${number} ${tokenAddress}: ${Date.now() - markStart}`);
+        } else {
+            for (let i = 0; i < number; i++) {
+                console.log(`zkMint start mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
+                const tx = await contract.mintNextToken(wallet, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+                await tx.wait();
+                console.log(`zkMint end mintNextToken ${i} ${tokenAddress}: ${Date.now() - markStart}`);
+            }
         }
 
         console.log(`zkMint end ${tokenAddress}: ${Date.now() - markStart}`);

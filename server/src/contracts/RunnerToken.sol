@@ -1,11 +1,16 @@
+// Copyright (c) Immutable Australia Pty Ltd 2018 - 2023
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 import "@imtbl/zkevm-contracts/contracts/token/erc721/preset/ImmutableERC721.sol";
+import "./RunnerSkin.sol";
 
+// The Immutable coins you collect in the game
 contract RunnerToken is ImmutableERC721 {
     uint256 private _currentTokenId = 0;
     RunnerSkin private _skinContract;
+
+    event SkinCrafted(address owner, uint256 newTokenId);
 
     constructor(
         address skinContractAddr,
@@ -32,27 +37,20 @@ contract RunnerToken is ImmutableERC721 {
         _skinContract = RunnerSkin(skinContractAddr);
     }
 
-    event AssetCrafted(
-        address owner,
-        uint256 tokenId1,
-        uint256 tokenId2,
-        uint256 newTokenId
-    );
-
-    function mintToken(address to, uint256 tokenId) public {
+    // Mints the next token
+    function mintNextToken(address to) public returns (uint256) {
+        uint256 tokenId = ++_currentTokenId;
         _mintByID(to, tokenId);
-        _currentTokenId++;
+        return tokenId;
     }
 
-    function mintTokenByID(address to, uint256 tokenId) public {
-        _mintByID(to, tokenId);
-        _currentTokenId++;
-    }
-
-    function mintNextToken(address to) public {
-        uint256 tokenId = _currentTokenId + 1;
-        _mintByID(to, tokenId);
-        _currentTokenId++;
+    // Mints the next token by the given quantity
+    function mintNextTokenByQuantity(address to, uint256 quantity) public {
+        uint256[] memory tokenIds = new uint256[](quantity);
+        for (uint256 i = 0; i < quantity; i++) {
+            tokenIds[i] = ++_currentTokenId;
+        }
+        _mintBatchByID(to, tokenIds);
     }
 
     function craftSkin(
@@ -77,102 +75,8 @@ contract RunnerToken is ImmutableERC721 {
         
         _skinContract.mintNextToken(msg.sender);
 
-        emit AssetCrafted(msg.sender, tokenId1, tokenId2, newTokenId);
+        emit SkinCrafted(msg.sender, newTokenId);
 
         return newTokenId;
-    }
-}
-
-contract RunnerSkin is ImmutableERC721 {
-    uint256 private _currentTokenId = 0;
-
-    constructor(
-        address owner,
-        string memory name,
-        string memory symbol,
-        string memory baseURI,
-        string memory contractURI,
-        address operatorAllowlist,
-        address receiver,
-        uint96 feeNumerator
-    )
-        ImmutableERC721(
-            owner,
-            name,
-            symbol,
-            baseURI,
-            contractURI,
-            operatorAllowlist,
-            receiver,
-            feeNumerator
-        )
-    {}
-
-    event SkinCrafted(
-        address owner,
-        uint256 tokenId,
-        uint256 newTokenId
-    );
-
-    function mintToken(address to, uint256 tokenId) public {
-        _mintByID(to, tokenId);
-        _currentTokenId++;
-    }
-
-    function mintTokenByID(address to, uint256 tokenId) public {
-        _mintByID(to, tokenId);
-        _currentTokenId++;
-    }
-
-    function mintNextToken(address to) public {
-        uint256 tokenId = _currentTokenId + 1;
-        _mintByID(to, tokenId);
-        _currentTokenId++;
-    }
-
-    function craftSkin(uint256 tokenId) public returns (uint256) {
-        require(ownerOf(tokenId) == msg.sender, "craftSkin: Caller does not own the token");
-        
-        uint256 newTokenId = _currentTokenId + 1;
-
-        _burn(tokenId);
-        
-        mintTokenByID(msg.sender, newTokenId);
-
-        emit SkinCrafted(msg.sender, tokenId, newTokenId);
-
-        return newTokenId;
-    }
-}
-
-contract RunnerCharacter is ImmutableERC721 {
-    uint256 private _currentTokenId = 0;
-
-    constructor(
-        address owner,
-        string memory name,
-        string memory symbol,
-        string memory baseURI,
-        string memory contractURI,
-        address operatorAllowlist,
-        address receiver,
-        uint96 feeNumerator
-    )
-        ImmutableERC721(
-            owner,
-            name,
-            symbol,
-            baseURI,
-            contractURI,
-            operatorAllowlist,
-            receiver,
-            feeNumerator
-        )
-    {}
-
-    function mintNextToken(address to) public {
-        uint256 tokenId = _currentTokenId + 1;
-        _mintByID(to, tokenId);
-        _currentTokenId++;
     }
 }
