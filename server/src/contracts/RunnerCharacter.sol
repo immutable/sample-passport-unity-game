@@ -1,6 +1,6 @@
 // Copyright (c) Immutable Australia Pty Ltd 2018 - 2023
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity 0.8.19;
 
 import "@imtbl/zkevm-contracts/contracts/token/erc721/preset/ImmutableERC721.sol";
 
