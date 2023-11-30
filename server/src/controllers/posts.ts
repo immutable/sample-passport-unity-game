@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { AlchemyProvider, JsonRpcProvider } from '@ethersproject/providers';
+import { JsonRpcProvider } from '@ethersproject/providers';
 import { Wallet } from '@ethersproject/wallet';
 import { ethers } from 'ethers';
 import { createStarkSigner, generateLegacyStarkPrivateKey, Configuration } from '@imtbl/core-sdk';
