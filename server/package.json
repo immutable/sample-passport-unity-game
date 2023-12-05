@@ -15,7 +15,7 @@
     "@imtbl/core-sdk": "^2.4.0",
     "@imtbl/imlogging": "^1.0.33",
     "@imtbl/imx-sdk": "^2.1.1",
-    "@imtbl/sdk": "^0.34.0",
+    "@imtbl/sdk": "^0.35.0",
     "@types/express": "^4.17.17",
     "@types/morgan": "^1.9.4",
     "dotenv": "^8.2.0",
@@ -25,5 +25,17 @@
     "nodemon": "^3.0.1",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.6"
+  },
+  "overrides": {
+    "@uniswap/swap-router-contracts": {
+      "@openzeppelin/contracts": "3.4.2-solc-0.7"
+    },
+    "@uniswap/v3-periphery": {
+      "@openzeppelin/contracts": "3.4.2-solc-0.7"
+    },
+    "@uniswap/v3-staker": {
+      ".": "1.0.2",
+      "@openzeppelin/contracts": "3.4.2-solc-0.7"
+    }
   }
 }
