@@ -64,7 +64,7 @@ To support minting and crafting in the game, three NFT collections need to be pr
 
 1. [Set up your development wallet](https://docs.immutable.com/docs/zkEVM/guides/wallet)
 2. [Obtain Test-$IMX](https://docs.immutable.com/docs/zkEVM/guides/faucet) so you can send transactions (specifically to mint assets in this game) and deploy smart contracts on zkEVM Testnet
-3. Follow [this](https://docs.immutable.com/docs/zkEVM/deploy-contracts) guide on how to deploy the [three zkEVM contracts](https://github.com/immutable/sample-passport-unity-game/tree/main/contracts/contracts) the game requires
+3. Follow [this](https://docs.immutable.com/docs/zkEVM/deploy-contracts) guide or use [this](https://github.com/immutable/sample-passport-unity-game/blob/main/contracts/README.md) to deploy the [three zkEVM contracts](https://github.com/immutable/sample-passport-unity-game/tree/main/contracts/contracts) the game requires
 4. Rename `server/.env.sample` to `.env`:
     1. Update `PRIVATE_KEY` with your development wallet's private key
     2. Update `ZK_TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
