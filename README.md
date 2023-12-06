@@ -64,7 +64,7 @@ To support minting and crafting in the game, three NFT collections need to be pr
 
 1. [Set up your development wallet](https://docs.immutable.com/docs/zkEVM/guides/wallet)
 2. [Obtain Test-$IMX](https://docs.immutable.com/docs/zkEVM/guides/faucet) so you can send transactions (specifically to mint assets in this game) and deploy smart contracts on zkEVM Testnet
-3. Follow [this](https://docs.immutable.com/docs/zkEVM/deploy-contracts) guide on how to deploy the [three zkEVM contracts](https://github.com/immutable/sample-passport-unity-game/tree/main/server/src/contracts) the game requires
+3. Follow [this](https://docs.immutable.com/docs/zkEVM/deploy-contracts) guide on how to deploy the [three zkEVM contracts](https://github.com/immutable/sample-passport-unity-game/tree/main/contracts/contracts) the game requires
 4. Rename `server/.env.sample` to `.env`:
     1. Update `PRIVATE_KEY` with your development wallet's private key
     2. Update `ZK_TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
@@ -75,8 +75,8 @@ To support minting and crafting in the game, three NFT collections need to be pr
     2. Update`ZK_SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
 6. The game uses [zkEVM Send Transactions](https://docs.immutable.com/docs/zkEVM/sdks/unity#zkevm-send-transaction) to perform crafting, so you must [contact us](https://docs.immutable.com/docs/x/contact/) for pre-approval. You will need to provide us:
     1. The client ID
-    2. The `TOKEN_TOKEN_ADDRESS` and the function signature of the [craftSkin](https://github.com/immutable/sample-passport-unity-game/blob/8e28f83496a3864ddd8aa45abe6979c84c529ba0/server/src/contracts/RunnerToken.sol#L57) method, i.e. `0x63daf310`
-    3. The `SKIN_TOKEN_ADDRESS` and the function signature of the [craftSkin](https://github.com/immutable/sample-passport-unity-game/blob/8e28f83496a3864ddd8aa45abe6979c84c529ba0/server/src/contracts/RunnerSkin.sol#L52) method, i.e. `0xd820bf6a`
+    2. The `TOKEN_TOKEN_ADDRESS` and the function signature of the [craftSkin](https://github.com/immutable/sample-passport-unity-game/blob/d003639beb8b6ae91dbb590a20349d4ba67e79b2/contracts/contracts/RunnerToken.sol#L57) method, i.e. `0x63daf310`
+    3. The `SKIN_TOKEN_ADDRESS` and the function signature of the [craftSkin](https://github.com/immutable/sample-passport-unity-game/blob/d003639beb8b6ae91dbb590a20349d4ba67e79b2/contracts/contracts/RunnerSkin.sol#L52) method, i.e. `0xd820bf6a`
 
 ## Running the game on Windows and macOS
 
@@ -122,6 +122,6 @@ For example, to claim the first skin, the user needs to burn three of their toke
 Crafting is done by calling the craft function in the smart contract. This is done by using zkEVM Send Transaction.
 
 For example, to claim the cooler skin, the user needs to burn their current skin first:
-* [Get the encoded data](https://github.com/immutable/sample-passport-unity-game/blob/ed06ce54c77d0e53837e494ae3acb04b4e98f7df/Assets/Shared/Scripts/UI/LevelCompleteScreen.cs#L557) required to call the RunnerSkin contract's [`craftSkin` function](https://github.com/immutable/sample-passport-unity-game/blob/8e28f83496a3864ddd8aa45abe6979c84c529ba0/server/src/contracts/RunnerSkin.sol#L52) by calling [`POST /zk/skin/craftskin/encodeddata`](https://github.com/immutable/sample-passport-unity-game/blob/ed06ce54c77d0e53837e494ae3acb04b4e98f7df/server/src/routes/posts.ts#L13)
+* [Get the encoded data](https://github.com/immutable/sample-passport-unity-game/blob/ed06ce54c77d0e53837e494ae3acb04b4e98f7df/Assets/Shared/Scripts/UI/LevelCompleteScreen.cs#L557) required to call the RunnerSkin contract's [`craftSkin` function](https://github.com/immutable/sample-passport-unity-game/blob/d003639beb8b6ae91dbb590a20349d4ba67e79b2/contracts/contracts/RunnerSkin.sol#L52) by calling [`POST /zk/skin/craftskin/encodeddata`](https://github.com/immutable/sample-passport-unity-game/blob/ed06ce54c77d0e53837e494ae3acb04b4e98f7df/server/src/routes/posts.ts#L13)
 * Use zkEVM Send Transaction to [call the `craftSkin` function](https://github.com/immutable/sample-passport-unity-game/blob/ed06ce54c77d0e53837e494ae3acb04b4e98f7df/Assets/Shared/Scripts/UI/LevelCompleteScreen.cs#L558) by passing the RunnerSkin contract address and the encoded data
   * Note that the craftSkin function does all the burning and minting
