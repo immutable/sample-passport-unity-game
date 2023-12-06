@@ -47,11 +47,12 @@ To support minting and crafting in the game, three NFT collections need to be pr
 #### Immutable X
 
 1. Follow [this](https://docs.immutable.com/docs/x/zero-to-hero-nft-minting) guide on how to create the three NFT collections
-2. Rename `server/.env.sample` to `.env`:
+2. Rename `server/.env.example` to `.env`:
     1. Update `PRIVATE_KEY` with your wallet's private key 
     2. Update `TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
     3. Update `CHARACTER_TOKEN_ADDRESS` to the contract address of Immutable Character Token
     4. Update `SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
+    5. Update `ALCHEMY_API_KEY` with your [Alchemy](https://www.alchemy.com/) Sepolia API key
 3. Open `Assets/Shared/Scripts/Service/ApiService.cs` 
     1. Update`TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
     2. Update`SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
@@ -65,11 +66,12 @@ To support minting and crafting in the game, three NFT collections need to be pr
 1. [Set up your development wallet](https://docs.immutable.com/docs/zkEVM/guides/wallet)
 2. [Obtain Test-$IMX](https://docs.immutable.com/docs/zkEVM/guides/faucet) so you can send transactions (specifically to mint assets in this game) and deploy smart contracts on zkEVM Testnet
 3. Follow [this](https://docs.immutable.com/docs/zkEVM/deploy-contracts) guide or use [this](https://github.com/immutable/sample-passport-unity-game/blob/main/contracts/README.md) to deploy the [three zkEVM contracts](https://github.com/immutable/sample-passport-unity-game/tree/main/contracts/contracts) the game requires
-4. Rename `server/.env.sample` to `.env`:
+4. Rename `server/.env.example` to `.env`:
     1. Update `PRIVATE_KEY` with your development wallet's private key
     2. Update `ZK_TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
-    2. Update `ZK_CHARACTER_TOKEN_ADDRESS` to the contract address of Immutable Character Token
-    3. Update `ZK_SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
+    3. Update `ZK_CHARACTER_TOKEN_ADDRESS` to the contract address of Immutable Character Token
+    4. Update `ZK_SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
+    5. Update `ALCHEMY_API_KEY` with your [Alchemy](https://www.alchemy.com/) Sepolia API key
 5. Open `Assets/Shared/Scripts/Service/ApiService.cs` 
     1. Update`ZK_TOKEN_TOKEN_ADDRESS` to the contract address of Immutable Runner Token
     2. Update`ZK_SKIN_TOKEN_ADDRESS` to the contract address of Immutable Skin Token
