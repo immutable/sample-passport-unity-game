@@ -88,7 +88,11 @@ namespace HyperCasual.Runner
 
         public async void OnLogout()
         {
+#if UNITY_ANDROID || UNITY_IPHONE || (UNITY_STANDALONE_OSX && !UNITY_EDITOR_OSX)
+            await Passport.Instance.LogoutPKCE();
+#else
             await Passport.Instance.Logout();
+#endif
             m_ConnectedAs.gameObject.SetActive(false);
             m_LogoutButton.gameObject.SetActive(false);
             ResetValues();
