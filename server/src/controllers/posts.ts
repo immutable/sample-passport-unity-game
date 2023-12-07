@@ -172,6 +172,38 @@ const wallet = async (req: Request, res: Response, next: NextFunction) => {
     }
 };
 
+const zkGrantMinterRole = async () => {
+    try {
+        let markStart = Date.now();
+        const signer = new Wallet(env.privateKey).connect(zkEvmProvider);
+
+        const abi = ['function grantMinterRole(address user) public'];
+
+        const tokenContract = new ethers.Contract(env.zkTokenTokenAddress, abi, signer);
+        console.log(`zkGrantMinterRole start ${env.zkTokenTokenAddress}: ${Date.now() - markStart}`);
+        const grantTx1 = await tokenContract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        await grantTx1.wait();
+        console.log(`zkGrantMinterRole end ${env.zkTokenTokenAddress}: ${Date.now() - markStart}`);
+
+        const characterContract = new ethers.Contract(env.zkCharacterTokenAddress, abi, signer);
+        console.log(`zkGrantMinterRole start ${env.zkCharacterTokenAddress}: ${Date.now() - markStart}`);
+        const grantTx2 = await characterContract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        await grantTx2.wait();
+        console.log(`zkGrantMinterRole end ${env.zkCharacterTokenAddress}: ${Date.now() - markStart}`);
+
+        const skinContract = new ethers.Contract(env.zkSkinTokenAddress, abi, signer);
+        console.log(`zkGrantMinterRole start ${env.zkSkinTokenAddress}: ${Date.now() - markStart}`);
+        const grantTx3 = await skinContract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        await grantTx3.wait();
+        console.log(`zkGrantMinterRole end ${env.zkSkinTokenAddress}: ${Date.now() - markStart}`);
+
+        console.log(`Granted minter role to all three zkevm contracts`);
+    } catch (error) {
+        console.log(`Failed to grant minter role`);
+        console.log(error);
+    }
+};
+
 const zkMintToken = async (req: Request, res: Response, next: NextFunction) => {
     return zkMint(env.zkTokenTokenAddress, req, res, next);
 }
@@ -202,10 +234,10 @@ const zkMint = async (tokenAddress: string, req: Request, res: Response, next: N
     
         const contract = new ethers.Contract(tokenAddress, abi, signer);
 
-        console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
-        const grantTx = await contract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
-        await grantTx.wait();
-        console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
+        // console.log(`zkMint start grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
+        // const grantTx = await contract.grantMinterRole(signer.address, { maxFeePerGas: 100000000049, maxPriorityFeePerGas: 100000000000, gasLimit: 5000000});
+        // await grantTx.wait();
+        // console.log(`zkMint end grantMinterRole ${tokenAddress}: ${Date.now() - markStart}`);
 
         if (number > 1) {
             console.log(`zkMint start mintNextTokenByQuantity ${number} ${tokenAddress}: ${Date.now() - markStart}`);
@@ -285,4 +317,4 @@ const zkSkinCraftSkinData = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-export default { mintToken, mintCharacter, mintSkin, wallet, zkMintToken, zkMintCharacter, zkMintSkin, zkTokenCraftSkinData, zkSkinCraftSkinData };
+export default { mintToken, mintCharacter, mintSkin, wallet, zkGrantMinterRole, zkMintToken, zkMintCharacter, zkMintSkin, zkTokenCraftSkinData, zkSkinCraftSkinData };
