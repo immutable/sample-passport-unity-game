@@ -95,10 +95,22 @@ The local server is used to mint and help craft assets.
 
 ## Running the game on Android and iOS
 
-The game does not support minting and crafting on mobile, so a server is not required.
+Run the server once pre-approved to use Immutable X Single/Bulk transfer and/or zkEVM Send Transactions for crafting.
 
-1. Switch to the platform you would like to run on in Build Settings
-2. Build and run the game on your device
+The local server is used to mint and help craft assets.
+
+1. Grab your local IP address
+    1. On Mac (Ethernet connection): Enter `ipconfig getifaddr en1` in your terminal
+    2. On Mac (Wireless connection): Enter `ipconfig getifaddr en0` in your terminal
+    3. On Windows: Enter `ipconfig` in command prompt -> grab the IPv4 Address
+2. Open `Assets/Shared/Scripts/Service/ApiService.cs`
+3. Update the [`SERVER_BASE_URL`](https://github.com/immutable/sample-passport-unity-game/blob/be18aa694d1216b37cee900bf0c0cfa8571ac92a/Assets/Shared/Scripts/Service/ApiService.cs#L18C49-L18C70) to your local IP address including the scheme (`http://`) and the port number (`6060`), e.g. `http://192.168.0.123:6060`
+4. Navigate to `server/`
+5. Run `npm install`
+6. Run `npm run dev`
+7. Switch to the platform you would like to run on in Build Settings
+8. Start the game
+    1. If you are running the game inside the Editor, open `Assets/Shared/Scenes/Boot.unity`
 
 
 ## Switching between Immutable X and zkEVM

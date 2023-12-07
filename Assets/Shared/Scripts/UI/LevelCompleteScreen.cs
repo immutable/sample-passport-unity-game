@@ -158,7 +158,7 @@ namespace HyperCasual.Runner
 
             // Next level button on Completed screen
             m_NextButton.RemoveListener(OnNextButtonClicked);
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+// #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             // Show new skin when level 2 completes
             // And user is not already using it
             if (MemoryCache.CurrentLevel == 2 && !MemoryCache.UseNewSkin)
@@ -176,9 +176,9 @@ namespace HyperCasual.Runner
             {
                 m_NextButton.AddListener(OnNextButtonClicked);
             }
-#else
-            m_NextButton.AddListener(OnNextButtonClicked);
-#endif
+// #else
+//             m_NextButton.AddListener(OnNextButtonClicked);
+// #endif
 
             // Next level button on Minted Fox (and Tokens) screen
             m_MintedNextButton.RemoveListener(OnNextButtonClicked);
@@ -192,14 +192,14 @@ namespace HyperCasual.Runner
             m_BonusSkinNextButton.RemoveListener(OnNextButtonClicked);
             m_BonusSkinNextButton.AddListener(OnNextButtonClicked);
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+// #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
             // If the user is connected to Passport, try and mint the tokens in the background
             // if minting did not complete in time, we just ignore any errors
             if (connected)
             {
                 MintTokens();
             }
-#endif
+// #endif
         }
 
         void OnNextButtonClicked()
@@ -241,14 +241,14 @@ namespace HyperCasual.Runner
                     Address = await Passport.Instance.GetAddress();
                 }
 
-#if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
+// #if UNITY_STANDALONE_WIN || UNITY_STANDALONE_OSX
                 // Successfully connected                
                 MintFoxAndTokens();
-#else
-                ShowContinueWithPassportButton(false);
-                HideLoading();
-                ShowNextButton(true);
-#endif
+// #else
+//                 ShowContinueWithPassportButton(false);
+//                 HideLoading();
+//                 ShowNextButton(true);
+// #endif
             } catch (Exception ex)
             {
                 Debug.Log($"Failed to connect: {ex.Message}");
