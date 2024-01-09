@@ -9,8 +9,8 @@ const operatorAllowlist = process.env.OPERATOR_ALLOWLIST;
 const nonceReservedDeployerSecret = process.env.NONCE_RESERVED_DEPLOYER_SECRET;
 const gasOverrides = {
   // use parameter to set tip for EIP1559 transaction (gas fee)
-  maxPriorityFeePerGas: 100e8, // 10 Gwei
-  maxFeePerGas: 150e8, // 15 Gwei
+  maxPriorityFeePerGas: 10e9, // 10 Gwei. This must exceed minimum gas fee expectation from the chain
+  maxFeePerGas: 15e9, // 15 Gwei
 };
 
 async function deploy() {

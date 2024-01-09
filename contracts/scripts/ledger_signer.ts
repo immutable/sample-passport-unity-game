@@ -1,5 +1,3 @@
-// Copied from https://github.com/immutable/contract-deployer/blob/NOJIRA_DEPLOYMENT_SCRIPT/scripts/helpers/ledger_signer.ts
-import { ethers } from "ethers";
 import Eth from "@ledgerhq/hw-app-eth";
 import TransportNodeHid from "@ledgerhq/hw-transport-node-hid";
 import {
