@@ -1,5 +1,5 @@
 ## How to deploy the contracts
-1. Rename `server/.env.example` to `.env`:
+1. Rename `contracts/.env.example` to `.env`:
     1. Update `PRIVATE_KEY` with your wallet's private key 
     2. Update `ETHERSCAN_API_KEY` to your etherscan API key
 2. Run `yarn install`

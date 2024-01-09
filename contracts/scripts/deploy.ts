@@ -1,10 +1,32 @@
 import { ethers } from "hardhat";
 import { RunnerCharacter, RunnerCharacter__factory, RunnerSkin, RunnerSkin__factory, RunnerToken, RunnerToken__factory } from "../typechain-types";
+import { LedgerSigner } from "./ledger_signer";
 
 async function deploy() {
-  // get deployer
-  const [deployer] = await ethers.getSigners();
-  console.log("Deploying contracts with the account:", deployer.address);
+    // Check environment variables
+    const rpcUrl = process.env.RPC_URL;
+    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+    const nonceReservedDeployerSecret = process.env.NONCE_RESERVED_DEPLOYER_SECRET;
+    let deployer;
+    if (nonceReservedDeployerSecret == "ledger") {
+        let index = process.env.NONCE_RESERVED_DEPLOYER_INDEX;
+        try {
+            const derivationPath = `m/44'/60'/${parseInt(index)}'/0/0`;
+            console.log("Getting LedgerSigner with path: ", derivationPath);
+            deployer = new LedgerSigner(provider, derivationPath);
+            console.log("Created LedgerSigner");
+        } catch (err) {
+            console.log("Failed to create LedgerSigner:", err);
+        }
+    } else {
+        console.log(`Creating Private Key Signer`);
+        deployer = new ethers.Wallet(nonceReservedDeployerSecret, provider);
+    }
+
+    // Get deployer address
+    console.log("Waiting to get deployer's address");
+    const deployerAddress = await deployer.getAddress();
+    console.log("Reserved deployer address is: ", deployerAddress);
 
   // check account balance
   console.log(
@@ -23,13 +45,13 @@ async function deploy() {
   );
   const runnerCharacterName = "Immutable Runner Character"
   const contract: RunnerCharacter = await characterFactory.connect(deployer).deploy(
-    deployer.address, // owner
+    deployerAddress, // owner
     runnerCharacterName, // name
     "IMRC", // symbol
     "https://json-server-sgiz.onrender.com/character/", // baseURI
     "https://json-server-sgiz.onrender.com/character/", // contractURI
     operatorAllowlist, // operator allowlist
-    deployer.address, // royalty recipient
+    deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
   );
   await contract.deployed();
@@ -42,13 +64,13 @@ async function deploy() {
   );
   const runnerSkinName = "Immutable Runner Skin"
   const skinContract: RunnerSkin = await skinFactory.connect(deployer).deploy(
-    deployer.address, // owner
+    deployerAddress, // owner
     runnerSkinName, // name
     "IMRS", // symbol
     "https://json-server-sgiz.onrender.com/skin/", // baseURI
     "https://json-server-sgiz.onrender.com/skin/", // contractURI
     operatorAllowlist, // operator allowlist
-    deployer.address, // royalty recipient
+    deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
   );
   await skinContract.deployed();
@@ -62,13 +84,13 @@ async function deploy() {
   const runnerTokenName = "Immutable Runner Token"
   const tokenContract: RunnerToken = await tokenFactory.connect(deployer).deploy(
     skinContract.address,
-    deployer.address, // owner
+    deployerAddress, // owner
     runnerTokenName, // name
     "IMR", // symbol
     "https://json-server-sgiz.onrender.com/token/", // baseURI
     "https://json-server-sgiz.onrender.com/token/", // contractURI
     operatorAllowlist, // operator allowlist
-    deployer.address, // royalty recipient
+    deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
   );
   await tokenContract.deployed();
