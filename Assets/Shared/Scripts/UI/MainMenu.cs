@@ -45,7 +45,7 @@ namespace HyperCasual.Runner
                 bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
                 if (hasCredsSaved)
                 {
-                    bool connected = await Passport.Instance.ConnectImxSilent();
+                    bool connected = await Passport.Instance.ConnectImx(useCachedSession: true);
                     if (connected)
                     {
                         await ShowConnectedEmail();
