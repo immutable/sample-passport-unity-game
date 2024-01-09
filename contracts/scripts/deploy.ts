@@ -2,31 +2,42 @@ import { ethers } from "hardhat";
 import { RunnerCharacter, RunnerCharacter__factory, RunnerSkin, RunnerSkin__factory, RunnerToken, RunnerToken__factory } from "../typechain-types";
 import { LedgerSigner } from "./ledger_signer";
 
-async function deploy() {
-    // Check environment variables
-    const rpcUrl = process.env.RPC_URL;
-    const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
-    const nonceReservedDeployerSecret = process.env.NONCE_RESERVED_DEPLOYER_SECRET;
-    let deployer;
-    if (nonceReservedDeployerSecret == "ledger") {
-        let index = process.env.NONCE_RESERVED_DEPLOYER_INDEX;
-        try {
-            const derivationPath = `m/44'/60'/${parseInt(index)}'/0/0`;
-            console.log("Getting LedgerSigner with path: ", derivationPath);
-            deployer = new LedgerSigner(provider, derivationPath);
-            console.log("Created LedgerSigner");
-        } catch (err) {
-            console.log("Failed to create LedgerSigner:", err);
-        }
-    } else {
-        console.log(`Creating Private Key Signer`);
-        deployer = new ethers.Wallet(nonceReservedDeployerSecret, provider);
-    }
+const rpcUrl = process.env.RPC_URL;
+const provider = new ethers.providers.JsonRpcProvider(rpcUrl);
+const index = process.env.NONCE_RESERVED_DEPLOYER_INDEX;
+const operatorAllowlist = process.env.OPERATOR_ALLOWLIST;
+const nonceReservedDeployerSecret = process.env.NONCE_RESERVED_DEPLOYER_SECRET;
+const gasOverrides = {
+  // use parameter to set tip for EIP1559 transaction (gas fee)
+  maxPriorityFeePerGas: 100e8, // 10 Gwei
+  maxFeePerGas: 150e8, // 15 Gwei
+};
 
-    // Get deployer address
-    console.log("Waiting to get deployer's address");
-    const deployerAddress = await deployer.getAddress();
-    console.log("Reserved deployer address is: ", deployerAddress);
+async function deploy() {
+  if (operatorAllowlist === undefined) {
+    throw new Error("Please set your OPERATOR_ALLOWLIST in a .env file");
+  }
+  
+  // set up deployer
+  let deployer;
+  if (nonceReservedDeployerSecret == "ledger") {
+      try {
+          const derivationPath = `m/44'/60'/${parseInt(index)}'/0/0`;
+          console.log(`Getting LedgerSigner with path: ${derivationPath}`);
+          deployer = new LedgerSigner(provider, derivationPath);
+          console.log(`Created LedgerSigner`);
+      } catch (err) {
+          console.log(`Failed to create LedgerSigner: ${err}`);
+      }
+  } else {
+      console.log(`Creating Private Key Signer...`);
+      deployer = new ethers.Wallet(nonceReservedDeployerSecret, provider);
+  }
+
+  // get deployer address
+  console.log("Waiting to get deployer's address");
+  const deployerAddress = await deployer.getAddress();
+  console.log("Reserved deployer address is: ", deployerAddress);
 
   // check account balance
   console.log(
@@ -34,17 +45,12 @@ async function deploy() {
     ethers.utils.formatEther(await deployer.getBalance())
   );
 
-  const operatorAllowlist = process.env.OPERATOR_ALLOWLIST;
-  if (operatorAllowlist === undefined) {
-    throw new Error("Please set your OPERATOR_ALLOWLIST in a .env file");
-  }
-
-  // deploy MyERC721 contract
+  // deploy ERC721 contracts
   const characterFactory: RunnerCharacter__factory = await ethers.getContractFactory(
     "RunnerCharacter"
   );
   const runnerCharacterName = "Immutable Runner Character"
-  const contract: RunnerCharacter = await characterFactory.connect(deployer).deploy(
+  const characterContract: RunnerCharacter = await characterFactory.connect(deployer).deploy(
     deployerAddress, // owner
     runnerCharacterName, // name
     "IMRC", // symbol
@@ -53,11 +59,10 @@ async function deploy() {
     operatorAllowlist, // operator allowlist
     deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
+    gasOverrides, // tipOverrides
   );
-  await contract.deployed();
-
-  // log deployed contract address
-  console.log(`${runnerCharacterName} contract deployed to ${contract.address}`);
+  await characterContract.deployed();
+  console.log(`${runnerCharacterName} contract deployed to ${characterContract.address}`);
 
   const skinFactory: RunnerSkin__factory = await ethers.getContractFactory(
     "RunnerSkin"
@@ -72,10 +77,9 @@ async function deploy() {
     operatorAllowlist, // operator allowlist
     deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
+    gasOverrides, // tipOverrides
   );
   await skinContract.deployed();
-
-  // log deployed contract address
   console.log(`${runnerSkinName} contract deployed to ${skinContract.address}`);
 
   const tokenFactory: RunnerToken__factory = await ethers.getContractFactory(
@@ -92,10 +96,9 @@ async function deploy() {
     operatorAllowlist, // operator allowlist
     deployerAddress, // royalty recipient
     ethers.BigNumber.from("2000"), // fee numerator
+    gasOverrides, // tipOverrides
   );
   await tokenContract.deployed();
-
-  // log deployed contract address
   console.log(`${runnerTokenName} contract deployed to ${tokenContract.address}`);
 }
 
