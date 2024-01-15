@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using Immutable.Passport;
+using Immutable.Passport.Model;
 using Cysharp.Threading.Tasks;
 
 namespace HyperCasual.Runner
@@ -16,7 +17,7 @@ namespace HyperCasual.Runner
         [SerializeField]
         HyperCasualButton m_StartButton;
         [SerializeField]
-        HyperCasualButton m_SettingsButton;
+        HyperCasualButton m_InventoryButton;
         [SerializeField]
         HyperCasualButton m_ShopButton;
         [SerializeField]
@@ -35,6 +36,9 @@ namespace HyperCasual.Runner
             Debug.Log("Showing Main menu screen");
             base.Show();
 
+            m_Loading.gameObject.SetActive(true);
+            m_ShopButton.gameObject.SetActive(false);
+            m_InventoryButton.gameObject.SetActive(false);
             bool isConnected = MemoryCache.IsConnected;
             if (isConnected)
             {
@@ -42,12 +46,15 @@ namespace HyperCasual.Runner
             }
             else
             {
+                m_ShopButton.gameObject.SetActive(false);
+                m_InventoryButton.gameObject.SetActive(false);
                 bool hasCredsSaved = await Passport.Instance.HasCredentialsSaved();
                 if (hasCredsSaved)
                 {
                     bool connected = await Passport.Instance.ConnectImx(useCachedSession: true);
                     if (connected)
                     {
+                        MemoryCache.IsConnected = true;
                         await ShowConnectedEmail();
                     }
                     else
@@ -73,6 +80,7 @@ namespace HyperCasual.Runner
         {
             m_ConnectedAs.gameObject.SetActive(true);
             m_LogoutButton.gameObject.SetActive(true);
+            
             string? email = await Passport.Instance.GetEmail();
             string? address = null;
             if (SaveManager.Instance.ZkEvm)
@@ -84,17 +92,26 @@ namespace HyperCasual.Runner
                 address = await Passport.Instance.GetAddress();
             }
             m_ConnectedAs.text = email != null && address != null ? $"{email}\n{address}" : "Connected";
+            // m_ShopButton.gameObject.SetActive(true);
+            // m_InventoryButton.gameObject.SetActive(true);
         }
 
         public async void OnLogout()
         {
+            m_LogoutButton.gameObject.SetActive(false);
+            m_ConnectedAs.gameObject.SetActive(false);
+            m_Loading.gameObject.SetActive(true);
+            m_ShopButton.gameObject.SetActive(false);
+            m_InventoryButton.gameObject.SetActive(false);
+            m_StartButton.gameObject.SetActive(false);
+
 #if UNITY_ANDROID || UNITY_IPHONE || (UNITY_STANDALONE_OSX && !UNITY_EDITOR_OSX)
             await Passport.Instance.LogoutPKCE();
 #else
             await Passport.Instance.Logout();
 #endif
-            m_ConnectedAs.gameObject.SetActive(false);
-            m_LogoutButton.gameObject.SetActive(false);
+            m_Loading.gameObject.SetActive(false);
+            m_StartButton.gameObject.SetActive(true);
             ResetValues();
         }
 
@@ -109,14 +126,14 @@ namespace HyperCasual.Runner
         void OnEnable()
         {
             m_StartButton.AddListener(OnStartButtonClick);
-            m_SettingsButton.AddListener(OnSettingsButtonClick);
+            m_InventoryButton.AddListener(OnInventoryButtonClick);
             m_ShopButton.AddListener(OnShopButtonClick);
         }
         
         void OnDisable()
         {
             m_StartButton.RemoveListener(OnStartButtonClick);
-            m_SettingsButton.RemoveListener(OnSettingsButtonClick);
+            m_InventoryButton.RemoveListener(OnInventoryButtonClick);
             m_ShopButton.RemoveListener(OnShopButtonClick);
         }
 
@@ -126,16 +143,18 @@ namespace HyperCasual.Runner
             AudioManager.Instance.PlayEffect(SoundID.ButtonSound);
         }
 
-        void OnSettingsButtonClick()
+        void OnInventoryButtonClick()
         {
-            UIManager.Instance.Show<SettingsMenu>();
-            AudioManager.Instance.PlayEffect(SoundID.ButtonSound);
+            // Not implemented
+            // UIManager.Instance.Show<InventoryView>();
+            // AudioManager.Instance.PlayEffect(SoundID.ButtonSound);
         }
 
         void OnShopButtonClick()
         {
-            UIManager.Instance.Show<ShopView>();
-            AudioManager.Instance.PlayEffect(SoundID.ButtonSound);
+            // Not implemented
+            // UIManager.Instance.Show<MarketplaceView>();
+            // AudioManager.Instance.PlayEffect(SoundID.ButtonSound);
         }
     }
 }
