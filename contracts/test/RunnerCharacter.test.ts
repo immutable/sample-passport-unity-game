@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { RunnerCharacter } from "../typechain-types";
+import { RunnerCharacter, OperatorAllowlist__factory, RunnerCharacter__factory } from "../typechain-types";
 
 describe("RunnerCharacter", function () {
   let contract: RunnerCharacter;
@@ -10,13 +10,13 @@ describe("RunnerCharacter", function () {
     const [owner] = await ethers.getSigners();
 
     // deploy OperatorAllowlist contract
-    const OperatorAllowlist = await ethers.getContractFactory(
+    const OperatorAllowlist = (await ethers.getContractFactory(
       "OperatorAllowlist"
-    );
+    )) as OperatorAllowlist__factory;
     const operatorAllowlist = await OperatorAllowlist.deploy(owner.address);
 
     // deploy RunnerCharacter contract
-    const RunnerCharacter = await ethers.getContractFactory("RunnerCharacter");
+    const RunnerCharacter = await ethers.getContractFactory("RunnerCharacter") as RunnerCharacter__factory;
     contract = await RunnerCharacter.deploy(
       owner.address, // owner
       "Immutable Runner Character", // name
@@ -69,7 +69,7 @@ describe("RunnerCharacter", function () {
     const minterRole = await contract.MINTER_ROLE();
     await expect(
       contract.connect(acc1).mint(acc1.address, 1)
-    ).to.be.rejectedWith(
+    ).to.be.revertedWith(
       `AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role ${minterRole}`
     );
   });

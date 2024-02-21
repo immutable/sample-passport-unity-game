@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { RunnerToken, RunnerSkin } from "../typechain-types";
+import { RunnerToken, RunnerSkin, OperatorAllowlist__factory, RunnerSkin__factory, RunnerToken__factory } from "../typechain-types";
 
 describe("RunnerToken", function () {
   let contract: RunnerToken;
@@ -13,11 +13,11 @@ describe("RunnerToken", function () {
     // deploy OperatorAllowlist contract
     const OperatorAllowlist = await ethers.getContractFactory(
       "OperatorAllowlist"
-    );
+    ) as OperatorAllowlist__factory;
     const operatorAllowlist = await OperatorAllowlist.deploy(owner.address);
 
     // deploy RunnerSkin contract
-    const RunnerSkin = await ethers.getContractFactory("RunnerSkin");
+    const RunnerSkin = await ethers.getContractFactory("RunnerSkin") as RunnerSkin__factory;
     skinContract = await RunnerSkin.deploy(
       owner.address, // owner
       "Immutable Runner Skin", // name
@@ -34,7 +34,7 @@ describe("RunnerToken", function () {
     await skinContract.grantRole(await skinContract.MINTER_ROLE(), owner.address);
 
     // deploy RunnerToken contract
-    const RunnerToken = await ethers.getContractFactory("RunnerToken");
+    const RunnerToken = await ethers.getContractFactory("RunnerToken") as RunnerToken__factory;
     contract = await RunnerToken.deploy(
       skinContract.address, // skin contract address
       owner.address, // owner
@@ -95,7 +95,7 @@ describe("RunnerToken", function () {
     const minterRole = await contract.MINTER_ROLE();
     await expect(
       contract.connect(acc1).mint(acc1.address, 1)
-    ).to.be.rejectedWith(
+    ).to.be.revertedWith(
       `AccessControl: account 0x70997970c51812dc3a010c7d01b50e0d17dc79c8 is missing role ${minterRole}`
     );
   });

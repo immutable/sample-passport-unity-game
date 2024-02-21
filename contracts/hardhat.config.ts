@@ -18,7 +18,7 @@ const config: HardhatUserConfig = {
     },
   },
   dependencyCompiler: {
-    paths: ["@imtbl/zkevm-contracts/contracts/allowlist/OperatorAllowlist.sol"],
+    paths: ["@imtbl/contracts/contracts/allowlist/OperatorAllowlistEnforced.sol"],
   },
   networks: {
     hardhat: {

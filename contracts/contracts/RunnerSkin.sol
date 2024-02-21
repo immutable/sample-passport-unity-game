@@ -2,7 +2,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.19;
 
-import "@imtbl/zkevm-contracts/contracts/token/erc721/preset/ImmutableERC721.sol";
+import "@imtbl/contracts/contracts/token/erc721/preset/ImmutableERC721.sol";
 
 // The skin you manage to unlock and claim in the game
 contract RunnerSkin is ImmutableERC721 {
@@ -41,11 +41,9 @@ contract RunnerSkin is ImmutableERC721 {
 
     // Mints number of tokens specified
     function mintNextTokenByQuantity(address to, uint256 quantity) public {
-        uint256[] memory tokenIds = new uint256[](quantity);
         for (uint256 i = 0; i < quantity; i++) {
-            tokenIds[i] = ++_currentTokenId;
+            _mintByID(to, ++_currentTokenId);
         }
-        _mintBatchByID(to, tokenIds);
     }
 
     // Burns the token specified and a new one to the caller

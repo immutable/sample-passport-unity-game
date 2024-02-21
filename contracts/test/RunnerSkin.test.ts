@@ -1,6 +1,6 @@
 import { ethers } from "hardhat";
 import { expect } from "chai";
-import { RunnerSkin } from "../typechain-types";
+import { OperatorAllowlist__factory, RunnerSkin, RunnerSkin__factory } from "../typechain-types";
 
 describe("RunnerSkin", function () {
   let contract: RunnerSkin;
@@ -12,11 +12,11 @@ describe("RunnerSkin", function () {
     // deploy OperatorAllowlist contract
     const OperatorAllowlist = await ethers.getContractFactory(
       "OperatorAllowlist"
-    );
+    ) as OperatorAllowlist__factory;
     const operatorAllowlist = await OperatorAllowlist.deploy(owner.address);
 
     // deploy RunnerSkin contract
-    const RunnerSkin = await ethers.getContractFactory("RunnerSkin");
+    const RunnerSkin = await ethers.getContractFactory("RunnerSkin") as RunnerSkin__factory;
     contract = await RunnerSkin.deploy(
       owner.address, // owner
       "Immutable Runner Skin", // name

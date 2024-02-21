@@ -12,7 +12,7 @@
   "author": "Immutable",
   "license": "MIT",
   "dependencies": {
-    "@imtbl/zkevm-contracts": "latest",
+    "@imtbl/contracts": "2.2.3",
     "@openzeppelin/contracts": "^4.8.1",
     "@ledgerhq/hw-app-eth": "^6.35.0",
     "@ledgerhq/hw-transport-node-hid": "^6.28.0",
@@ -36,7 +36,6 @@
     "hardhat-gas-reporter": "^1.0.8",
     "solidity-coverage": "^0.8.1",
     "ts-node": "^10.9.1",
-    "typechain": "^8.1.0",
-    "@imtbl/contracts": "^2.0.0"
+    "typechain": "^8.1.0"
   }
 }
