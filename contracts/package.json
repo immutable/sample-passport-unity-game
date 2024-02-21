@@ -7,7 +7,8 @@
     "clean": "npx hardhat clean",
     "test": "npx hardhat test",
     "compile": "npx hardhat compile",
-    "deploy": "npx hardhat run scripts/deploy.ts"
+    "deploy": "npx hardhat run scripts/deploy.ts",
+    "grantMinterRole": "npx hardhat run scripts/grant_minter_role.ts"
   },
   "author": "Immutable",
   "license": "MIT",
