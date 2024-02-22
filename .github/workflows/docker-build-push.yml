@@ -1,9 +1,10 @@
 name: Build and push Docker image
 
 on:
-  release:
-    types: [created]
-
+  push:
+    branches:
+      - 'SRE-1970-host-demo-backend'
+  
   workflow_dispatch:
 
 jobs:
@@ -20,9 +21,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.TEMP_TOKEN_PACKAGE_PUSH }}
 
+      - name: Set env vars
+        run: |
+          echo BUILD_TIMESTAMP="$(date +%s)" >> $GITHUB_ENV
+          echo REPOSITORY_NAME="$(echo '${{ github.repository }}' | awk -F '/' '{print $2}')" >> $GITHUB_ENV
+          echo TAG_NAME="$(echo ${{ github.ref }} | cut -d / -f3-)" >> $GITHUB_ENV
+          echo SHORT_SHA="$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
       - name: Build and push Docker image
         uses: docker/build-push-action@v2
         with:
           context: foo/
           push: true
-          tags: ghcr.io/${{ github.repository }}:${{ github.ref }}
+          tags: ghcr.io/${{ github.repository }}/${{ env.REPOSITORY_NAME }}:sandbox-${{ env.BUILD_TIMESTAMP }}-git.${{ env.SHORT_SHA }}
