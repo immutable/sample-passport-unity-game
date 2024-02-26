@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - SRE-1970-host-demo-backend
 
 jobs:
   build-and-push:
