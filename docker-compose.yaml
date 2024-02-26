@@ -4,6 +4,8 @@ services:
   api:
     container_name: api
     build: server/
+    volumes:
+      - ./server/:/usr/src/app
     ports:
       - "6060:6060"
     env_file:
