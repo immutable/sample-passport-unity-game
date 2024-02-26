@@ -30,6 +30,5 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: server/
-          file: ../Dockerfile
           push: true
           tags: ghcr.io/${{ github.repository }}/api:dev-${{ env.BUILD_TIMESTAMP }}-git.${{ env.SHORT_SHA }}
