@@ -1,0 +1,20 @@
+version: "3"
+
+services:
+  api:
+    container_name: api
+    build:
+      context: server/
+      dockerfile: ../Dockerfile
+    ports:
+      - "6060:6060"
+    environment:
+      - PRIVATE_KEY=<foo>
+      - TOKEN_TOKEN_ADDRESS=<foo>
+      - CHARACTER_TOKEN_ADDRESS=<foo>
+      - SKIN_TOKEN_ADDRESS=<foo>
+      - ALCHEMY_API_KEY=<foo>
+      - ETH_NETWORK=<foo>
+      - ZK_TOKEN_TOKEN_ADDRESS=<foo>
+      - ZK_CHARACTER_TOKEN_ADDRESS=<foo>
+      - ZK_SKIN_TOKEN_ADDRESS=<foo>
