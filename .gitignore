@@ -81,3 +81,5 @@ crashlytics-build.properties
 **/._.DS_Store
 
 .env
+
+node_modules
