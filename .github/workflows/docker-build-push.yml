@@ -3,6 +3,7 @@ name: Build and push Docker image
 on:
   push:
     branches:
+      - main
       - SRE-1970-host-demo-backend
 
 jobs:
@@ -34,4 +35,4 @@ jobs:
         with:
           context: server/
           push: true
-          tags: ghcr.io/${{ github.repository }}/api:dev-${{ env.BUILD_TIMESTAMP }}-git.${{ env.SHORT_SHA }}
+          tags: ghcr.io/${{ github.repository }}/${{ env.REPOSITORY_NAME }}:dev-${{ env.BUILD_TIMESTAMP }}-git.${{ env.SHORT_SHA }}
