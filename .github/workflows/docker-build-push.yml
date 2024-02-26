@@ -3,7 +3,7 @@ name: Build and push Docker image
 on:
   push:
     branches:
-      - 'SRE-1970-host-demo-backend'
+      - main
 
 jobs:
   build-and-push:
