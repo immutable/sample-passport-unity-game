@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@imtbl/contracts": "2.2.3",
-    "@openzeppelin/contracts": "^4.8.1",
+    "@openzeppelin/contracts": "^4.9.6",
     "@ledgerhq/hw-app-eth": "^6.35.0",
     "@ledgerhq/hw-transport-node-hid": "^6.28.0",
     "dotenv": "^16.0.3",
