@@ -10,6 +10,10 @@
 
 # Sample Passport Unity Game
 
+As an example of using the [Immutable Unity SDK](https://github.com/immutable/unity-immutable-sdk), we'll use a Unity game called “Immutable Runner”, a customised version based on the [Unity Runner game template](https://unity.com/features/build-a-runner-game). In this game, the player takes on the role of an adventurous fox who must collect Immutable coins and food while avoiding obstacles like trees and bears to reach the finish line.
+
+What makes this game unique is that the Fox and Immutable Runner coins will be represented as NFTs (ERC721). This means that players can own these digital assets. Moreover, players can use the Immutable Runner coins they have collected to create or [craft](https://docs.immutable.com/docs/zkevm/products/minting/crafting/#what-is-crafting) new skins for their fox. These skins will also be represented as NFTs, further enriching the player's ownership experience.
+
 ## Supported Platforms
 
 * Windows
