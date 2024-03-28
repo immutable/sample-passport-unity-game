@@ -83,3 +83,8 @@ crashlytics-build.properties
 .env
 
 node_modules
+
+# Foundry
+/contracts/lib/**
+/contracts/out/**
+/contracts/cache_forge/**
