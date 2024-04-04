@@ -3706,9 +3706,10 @@ seaport-types@^0.0.1:
   resolved "https://registry.yarnpkg.com/seaport-types/-/seaport-types-0.0.1.tgz#e2a32fe8641853d7dadb1b0232d911d88ccc3f1a"
   integrity sha512-m7MLa7sq3YPwojxXiVvoX1PM9iNVtQIn7AdEtBnKTwgxPfGRWUlbs/oMgetpjT/ZYTmv3X5/BghOcstWYvKqRA==
 
-"seaport@git+https://github.com/immutable/seaport.git#1.5.0+im.1.3":
-  version "1.5.0"
-  resolved "git+https://github.com/immutable/seaport.git#ae061dc008105dd8d05937df9ad9a676f878cbf9"
+"seaport@https://github.com/immutable/seaport.git#1.5.0+im.1.3":
+  version "1.5.0+im.1"
+  uid ae061dc008105dd8d05937df9ad9a676f878cbf9
+  resolved "https://github.com/immutable/seaport.git#ae061dc008105dd8d05937df9ad9a676f878cbf9"
   dependencies:
     "@nomicfoundation/hardhat-network-helpers" "^1.0.7"
     "@openzeppelin/contracts" "^4.9.2"
@@ -4273,9 +4274,9 @@ undici-types@~5.26.4:
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
 undici@^5.14.0:
-  version "5.28.3"
-  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.3.tgz#a731e0eff2c3fcfd41c1169a869062be222d1e5b"
-  integrity sha512-3ItfzbrhDlINjaP0duwnNsKpDQk3acHI3gVJ1z4fmwMK31k5G9OVIAMLSIaP6w4FaGkaAkN6zaQO9LUvZ1t7VA==
+  version "5.28.4"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-5.28.4.tgz#6b280408edb6a1a604a9b20340f45b422e373068"
+  integrity sha512-72RFADWFqKmUb2hmmvNODKL3p9hcB6Gt2DOQMis1SEBaV6a4MH8soBvzg+95CYhCKPFedut2JY9bMfrDl9D23g==
   dependencies:
     "@fastify/busboy" "^2.0.0"
 
