@@ -2,6 +2,7 @@ import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
 import "@typechain/hardhat";
 import "hardhat-dependency-compiler";
+import "@nomicfoundation/hardhat-foundry";
 
 import * as dotenv from "dotenv";
 
@@ -18,7 +19,9 @@ const config: HardhatUserConfig = {
     },
   },
   dependencyCompiler: {
-    paths: ["@imtbl/contracts/contracts/allowlist/OperatorAllowlistEnforced.sol"],
+    paths: [
+      "@imtbl/contracts/contracts/allowlist/OperatorAllowlistEnforced.sol",
+    ],
   },
   networks: {
     hardhat: {
